@@ -1,0 +1,35 @@
+# --- python-uv stack ---
+# Byte-compiled / runtime
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+
+# Virtual environments (uv defaults to .venv)
+.venv/
+venv/
+env/
+
+# uv keeps uv.lock committed; cache is local-only
+.uv-cache/
+
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyright/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Notebooks
+.ipynb_checkpoints/

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# scaffold-repo — thin shim that delegates to the canonical script in
+# ~/.local/share/repo-scaffold/. Source-of-truth lives in
+# claude-core/repo-scaffold/templates/scaffold-new-repo.sh; apply.py installs
+# both this shim AND the script.
+set -euo pipefail
+exec "$HOME/.local/share/repo-scaffold/scaffold-new-repo.sh" "$@"

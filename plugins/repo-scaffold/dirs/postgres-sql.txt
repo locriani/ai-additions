@@ -1,0 +1,3 @@
+# postgres-sql: migrations/ for forward-only SQL, db/seeds for reference data.
+migrations
+db/seeds

@@ -1,0 +1,15 @@
+{
+  "description": "Detect the repo's stack at session start and load only the matching profile.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/env python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/stack-detect.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

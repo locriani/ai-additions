@@ -1,0 +1,18 @@
+# --- kubernetes stack ---
+# Rendered Helm output (regeneratable; commit charts/values, not output)
+charts/*/charts/
+charts/*/Chart.lock
+charts/*.tgz
+manifests/rendered/
+
+# Local kubeconfig fragments (never commit cluster creds)
+kubeconfig
+*.kubeconfig
+.kube/
+
+# Sealed secrets / SOPS encrypted file backups
+*.dec.yaml
+*.dec.yml
+
+# Kustomize build artifacts
+kustomize-build/

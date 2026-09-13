@@ -1,0 +1,29 @@
+# --- infra-terraform stack ---
+# State files (NEVER commit — use remote state with locking)
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Provider plugins / modules cache
+.terraform/
+.terraform.lock.hcl.bak
+
+# Plan output (artifact of plan-then-apply discipline)
+*.tfplan
+tfplan
+
+# Crash log
+crash.log
+crash.*.log
+
+# Variables containing secrets (commit *.tfvars.example instead)
+*.auto.tfvars
+*.auto.tfvars.json
+terraform.tfvars
+terraform.tfvars.json
+
+# CLI overrides
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json

@@ -22,6 +22,11 @@ Two of them already load conditionally rather than always-on, and say so in thei
 own text: `PLAN_AUDIT.md` loads only on `call(ExitPlanMode ∧ plan_has_new)`, and
 `CEILINGS.md` only once a candidate limiting sentence exists.
 
+`LOGIC_RENDERING.md` is the exception that proves the rule and is **not** here:
+it already carried skill frontmatter, so it went to
+[`../plugins/logic-rendering/`](../plugins/logic-rendering/) as a real skill
+rather than into this directory.
+
 ## Contents
 
 | File | Lines | What it carries |
@@ -29,7 +34,9 @@ own text: `PLAN_AUDIT.md` loads only on `call(ExitPlanMode ∧ plan_has_new)`, a
 | `CRAFT_VS_YAGNI.md` | 136 | Where YAGNI governs and where invoking it is a category error — it kills speculative *architecture*, not clean-code *structure*. |
 | `PLAN_AUDIT.md` | 50 | The §6 speculation gate, run against a plan before it is presented. |
 | `CEILINGS.md` | 32 | §11 once a limiting claim is in hand: sentences that are never invariants, and the four arguments that get one written anyway. |
-| `GITHUB.md` | 70 | GitHub workflow discipline — structured surfaces, native relationships, `gh` CLI over web-API calls. |
+| `GITHUB.md` | 70 | GitHub workflow discipline — structured surfaces, native relationships, `gh` CLI over web-API calls. Enforced by [`../plugins/github-utilities/`](../plugins/github-utilities/). |
+| `SKILL_AUTHORING.md` | 59 | How to author a skill — defers to the official `skill-creator` plugin for the mechanics. |
+| `NEW_REPO_BOOTSTRAP.md` | 50 | What to do on landing in a `~/Developer/` repo that has no `CLAUDE.md`. Paired with [`../plugins/repo-scaffold/`](../plugins/repo-scaffold/). |
 
 ## One deviation from verbatim
 

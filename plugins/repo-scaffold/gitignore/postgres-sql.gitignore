@@ -1,0 +1,11 @@
+# --- postgres-sql stack ---
+# pgdump / restore output
+*.dump
+*.sql.gz
+backups/
+
+# Local dev dbs (if using docker volumes)
+pgdata/
+
+# psql session artifacts
+.psql_history

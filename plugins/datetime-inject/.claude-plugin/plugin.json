@@ -1,0 +1,16 @@
+{
+  "name": "datetime-inject",
+  "description": "UserPromptSubmit hook injecting the current LOCAL date and time into context once per turn, as one bracketed line (human long-form plus ISO machine-form). The harness stamps the date only; this adds the wall clock.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Zach Gardner",
+    "email": "locriani@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "datetime",
+    "clock",
+    "hooks",
+    "context"
+  ]
+}

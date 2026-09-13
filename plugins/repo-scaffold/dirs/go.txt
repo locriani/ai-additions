@@ -1,0 +1,4 @@
+# go: cmd/ entrypoints, internal/ private code, pkg/ public libs (per profile).
+cmd
+internal
+pkg

@@ -7,10 +7,20 @@
   },
   "plugins": [
     {
-      "name": "worktree-guard",
-      "description": "Stop hook blocking writes that cross into another worktree of the same repo.",
+      "name": "datetime-inject",
+      "description": "UserPromptSubmit hook injecting per-turn local date and time.",
       "version": "1.0.0",
-      "source": "./plugins/worktree-guard",
+      "source": "./plugins/datetime-inject",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
+    },
+    {
+      "name": "extras",
+      "description": "Five skills: code-review, time-estimation, defect-density, dev-velocity, skill-perf-judge.",
+      "version": "1.0.0",
+      "source": "./plugins/extras",
       "author": {
         "name": "Zach Gardner",
         "email": "locriani@gmail.com"
@@ -21,6 +31,56 @@
       "description": "Stop hook enforcing the gh-CLI mandate, plus gh-issue-rel for native sub-issues and dependencies.",
       "version": "1.0.0",
       "source": "./plugins/github-utilities",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
+    },
+    {
+      "name": "logic-rendering",
+      "description": "Skill: render logic as boolean/modal checksums alongside prose.",
+      "version": "1.0.0",
+      "source": "./plugins/logic-rendering",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
+    },
+    {
+      "name": "repo-scaffold",
+      "description": "/scaffold-repo command and CLI for one-shot per-stack new-repo scaffolding.",
+      "version": "1.0.0",
+      "source": "./plugins/repo-scaffold",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
+    },
+    {
+      "name": "skill-perf",
+      "description": "Stop-hook ledger of skill-invocation cost, plus a judge reminder.",
+      "version": "1.0.0",
+      "source": "./plugins/skill-perf",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
+    },
+    {
+      "name": "stack-profiles",
+      "description": "Eleven per-stack addenda plus a SessionStart detector that loads only the matching one.",
+      "version": "1.0.0",
+      "source": "./plugins/stack-profiles",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
+    },
+    {
+      "name": "worktree-guard",
+      "description": "Stop hook blocking writes that cross into another worktree of the same repo.",
+      "version": "1.0.0",
+      "source": "./plugins/worktree-guard",
       "author": {
         "name": "Zach Gardner",
         "email": "locriani@gmail.com"

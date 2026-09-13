@@ -1,0 +1,15 @@
+{
+  "description": "Inject the current local date and time into context once per turn.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/datetime-inject.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

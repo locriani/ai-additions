@@ -1,0 +1,3 @@
+# node-typescript: src + tests; dist is gitignored build output.
+src
+tests

@@ -1,0 +1,36 @@
+# --- rails stack ---
+# Ruby
+*.gem
+*.rbc
+.bundle/
+vendor/bundle/
+
+# Rails app dirs (per `rails new` defaults)
+/.byebug_history
+/coverage/
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
+/storage/*
+!/storage/.keep
+/public/assets/
+/public/packs/
+/public/packs-test/
+
+# Credentials (master.key is per-machine; encrypted creds are committed)
+/config/master.key
+/config/credentials/*.key
+
+# Node (for esbuild / importmap-rails / jsbundling)
+/node_modules/
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+# Spring / Spring-watcher
+/.spring/
+
+# Compiled JS / CSS
+/app/assets/builds/*
+!/app/assets/builds/.keep

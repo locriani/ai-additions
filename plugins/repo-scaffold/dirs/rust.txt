@@ -1,0 +1,1 @@
+# rust: `cargo init` is the canonical entry. Empty here — see next-steps.

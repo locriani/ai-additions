@@ -1,0 +1,17 @@
+{
+  "name": "logic-rendering",
+  "description": "Skill: render logic \u2014 conditionals, implications, multi-premise reasoning \u2014 as boolean/modal notation alongside short prose, so a formalization error is visible at a glance instead of buried in a wall of text.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Zach Gardner",
+    "email": "locriani@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "logic",
+    "boolean",
+    "modal",
+    "rendering",
+    "verification"
+  ]
+}

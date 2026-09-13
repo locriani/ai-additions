@@ -1,0 +1,5 @@
+manifests
+charts
+kustomize/base
+kustomize/overlays/dev
+kustomize/overlays/prod

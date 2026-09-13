@@ -1,0 +1,1 @@
+# rails: `rails new` owns the full skeleton. Empty here — see next-steps.

@@ -1,0 +1,6 @@
+  - cd "$REPO"
+  - go mod init github.com/<your-user>/<<NAME>>
+  - Write your first cmd/<entrypoint>/main.go.
+  - go mod tidy
+  - Edit CLAUDE.md: fill build/test commands (default: `go test -race ./...`).
+  - Optional: /init-ai-memory in the repo root.

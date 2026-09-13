@@ -1,0 +1,16 @@
+{
+  "name": "stack-profiles",
+  "description": "Per-stack rule addenda (11 stacks: Swift/Apple, bash, Python/uv, Node/TypeScript, Postgres, Rust, Go, React/Vite, Rails, Terraform, Kubernetes) plus a SessionStart hook that detects the repo's stack and loads only the matching profile.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Zach Gardner",
+    "email": "locriani@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "stacks",
+    "profiles",
+    "sessionstart",
+    "hooks"
+  ]
+}

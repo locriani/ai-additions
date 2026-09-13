@@ -1,0 +1,28 @@
+# --- node-typescript stack ---
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Build output (TS / bundlers)
+dist/
+build/
+out/
+.tsbuildinfo
+*.tsbuildinfo
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# Caches
+.cache/
+.parcel-cache/
+.eslintcache
+.turbo/
+
+# pnpm lockfile IS committed (pnpm-lock.yaml). yarn.lock / package-lock.json
+# are also committed; do not ignore them.

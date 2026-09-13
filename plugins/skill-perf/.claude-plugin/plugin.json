@@ -1,0 +1,17 @@
+{
+  "name": "skill-perf",
+  "description": "Skill performance ledger. A Stop hook logs every Skill invocation's mechanical cost (tokens, first-token latency, model) into a SQLite ledger at zero token overhead; a UserPromptSubmit hook nudges periodically to judge the unscored rows. Capture is free; judgement is deliberate.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Zach Gardner",
+    "email": "locriani@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "telemetry",
+    "ledger",
+    "sqlite",
+    "hooks"
+  ]
+}

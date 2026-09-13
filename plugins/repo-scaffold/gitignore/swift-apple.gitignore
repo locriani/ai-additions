@@ -1,0 +1,28 @@
+# --- swift-apple stack ---
+# Build products (regeneratable from project.yml via xcodegen)
+build/
+DerivedData/
+.build/
+*.xcodeproj/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+
+# SwiftPM
+Package.resolved
+.swiftpm/
+
+# Tuist / XcodeGen artifacts (project.yml IS source of truth)
+Tuist/Dependencies/
+*.generated/
+
+# Fastlane / archives
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+*.ipa
+*.dSYM.zip
+*.xcarchive/
+
+# CocoaPods (uncomment if used)
+# Pods/

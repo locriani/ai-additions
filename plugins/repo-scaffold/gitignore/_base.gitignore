@@ -1,0 +1,27 @@
+# --- universal (every repo) ---
+.DS_Store
+*.swp
+*.swo
+*~
+*.bak
+*.bak.*
+.idea/
+.vscode/
+*.iml
+.env
+.env.local
+.env.*.local
+
+# --- Claude Code per-machine state (per Standard Configs convention) ---
+.claude/ai-memory.db
+.claude/ai-memory.db-shm
+.claude/ai-memory.db-wal
+.claude/ai-memory-backups/
+.claude/hooks/*.log
+.claude/sessions/
+
+# --- generic build/artifact junk ---
+*.log
+*.pid
+tmp/
+.cache/

@@ -1,0 +1,20 @@
+# --- go stack ---
+# Compiled output
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# Test binaries / coverage
+*.test
+*.out
+coverage.out
+
+# Go workspace
+go.work
+go.work.sum
+
+# Vendor (uncomment if you DO vendor)
+# vendor/

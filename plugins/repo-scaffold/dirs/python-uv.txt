@@ -1,0 +1,3 @@
+# python-uv: src/<package>/ layout per stack profile (canonical).
+src/<<NAME>>
+tests

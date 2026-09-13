@@ -1,0 +1,25 @@
+{
+  "description": "Log every Skill invocation's mechanical cost, and periodically nudge to judge unscored rows.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/env python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/skill-perf-ledger.py\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/env python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/skill-perf-judge-reminder.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

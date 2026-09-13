@@ -1,0 +1,2 @@
+# swift-apple: layout is owned by xcodegen/Tuist/SPM — don't mkdir blind.
+# (intentionally empty)

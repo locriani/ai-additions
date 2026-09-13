@@ -1,0 +1,9 @@
+# --- rust stack ---
+# Cargo build output (Cargo.lock IS committed for binaries; libraries: your call)
+/target/
+target/
+**/*.rs.bk
+*.pdb
+
+# rust-analyzer
+rust-project.json

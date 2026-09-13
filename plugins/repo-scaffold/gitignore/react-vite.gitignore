@@ -1,0 +1,30 @@
+# --- react-vite stack (extends node-typescript implicitly via _base+node lines) ---
+# Note: the scaffold concatenates _base.gitignore + react-vite.gitignore only.
+# Node patterns are duplicated here for self-containment.
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Vite / build output
+dist/
+dist-ssr/
+*.local
+
+# TS
+.tsbuildinfo
+*.tsbuildinfo
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# Caches
+.cache/
+.parcel-cache/
+.eslintcache
+.turbo/
+.next/
+.nuxt/
+.vercel/
+.netlify/
