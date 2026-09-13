@@ -1,0 +1,15 @@
+{
+  "description": "Block turn-end on a GitHub web-API call that gh's subcommands could have covered.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/env python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/github-api-stop-hook.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

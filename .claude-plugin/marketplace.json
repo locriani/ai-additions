@@ -15,6 +15,16 @@
         "name": "Zach Gardner",
         "email": "locriani@gmail.com"
       }
+    },
+    {
+      "name": "github-utilities",
+      "description": "Stop hook enforcing the gh-CLI mandate, plus gh-issue-rel for native sub-issues and dependencies.",
+      "version": "1.0.0",
+      "source": "./plugins/github-utilities",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
     }
   ]
 }

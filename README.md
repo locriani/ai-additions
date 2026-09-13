@@ -3,7 +3,7 @@
 Portable Claude Code behaviour additions — skills, hooks, and MCP servers that
 change how Claude *works*, independent of any one machine.
 
-**Status: six items added, none enabled.** See
+**Status: seven items added, none enabled.** See
 [`SETUP-LIST.md`](SETUP-LIST.md) for what is approved, pending, and declined.
 
 *Added* and *enabled* are separate states here. An addition is in the repo,

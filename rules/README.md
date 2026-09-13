@@ -31,15 +31,10 @@ own text: `PLAN_AUDIT.md` loads only on `call(ExitPlanMode ∧ plan_has_new)`, a
 | `CEILINGS.md` | 32 | §11 once a limiting claim is in hand: sentences that are never invariants, and the four arguments that get one written anyway. |
 | `GITHUB.md` | 70 | GitHub workflow discipline — structured surfaces, native relationships, `gh` CLI over web-API calls. |
 
-## Known dangling link
+## One deviation from verbatim
 
-`GITHUB.md` links to `../../../claude-plugins/github-utilities/` for its runtime
-enforcement — a Stop hook plus the `gh-issue-rel` CLI. That path resolved inside
-Standard Configs and does not resolve here.
-
-The link is left as-authored rather than patched, because `github-utilities` has
-**not** been approved for addition. Fixing the link by bringing the hook across
-would be adding an unapproved item; rewriting the link to point at nothing would
-hide that the rule currently has no enforcement in this repo. When the hook is
-approved, the link is repaired by the move. Until then the rule here is prose
-without a runtime.
+`GITHUB.md` is the only file here not byte-identical to its source. It linked
+twice to its runtime enforcement as `../../../claude-plugins/github-utilities/`,
+which resolved inside Standard Configs and not here; both now read
+[`../plugins/github-utilities/`](../plugins/github-utilities/) and resolve. Two
+lines, paths only — no prose changed. The other three files are unmodified.

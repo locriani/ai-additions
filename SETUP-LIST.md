@@ -35,14 +35,19 @@ approval.
 | `worktree-guard` | 2026-09-13 | "as well as ... worktree-guard" | `plugins/worktree-guard/` | No |
 | `github` | 2026-09-13 | "as well as ... github" | `rules/GITHUB.md` | No |
 | `claude-statusline` | 2026-09-13 | "also add the entry for the statusline for claude code please" | `referenced/claude-statusline.md` | No |
+| `github-utilities` | 2026-09-13 | "oh add github utilities" | `plugins/github-utilities/` | No |
 
 ### Scope notes on the above
 
-- **`github` is the rule file only.** `GITHUB.md` was named; `github-utilities`
-  (the Stop hook that enforces it, plus the `gh-issue-rel` CLI) was not. It is
-  proposed as a bundle in **Pending** and needs its own approval. Consequence:
-  `GITHUB.md`'s link to its runtime enforcement dangles here, deliberately —
-  see [`rules/README.md`](rules/README.md).
+- **`github` arrived in two approvals** — `GITHUB.md` first, then
+  `github-utilities`, the Stop hook that enforces it plus the `gh-issue-rel`
+  CLI. With both here, `GITHUB.md`'s two links to its runtime enforcement have
+  been repaired; it is the one file in `rules/` that is not byte-identical, and
+  the change is those two paths. See [`rules/README.md`](rules/README.md).
+- **`github-utilities` takes two steps to enable, not one.** Installing the
+  plugin wires the Stop hook, but a plugin cannot put a binary on `PATH`, so
+  `gh-issue-rel` must be linked separately — otherwise the hook blocks turn-end
+  telling you to run a command that is not there.
 - **The four rule files are byte-identical copies**, not skills. None carries
   frontmatter, so none fires on its own. Converting them is design work on
   content approved as-is, and is not assumed.
@@ -60,7 +65,6 @@ approval.
 | logic-rendering | Skill: render logic as boolean/modal checksums | `Standard Configs/claude-md/templates/global/LOGIC_RENDERING.md` |
 | reference-points | Citation grammar + section numbering (was called "section rendering") | `locriani/reference-points` (own repo) |
 | skill-perf | Skill-invocation ledger + LLM judge | `Standard Configs/claude-plugins/skill-perf/` + `extras/skills/skill-perf-judge/` |
-| github-utilities | Stop hook enforcing `GITHUB.md` + `gh-issue-rel` CLI. `GITHUB.md` is already approved and links to it | `Standard Configs/claude-plugins/github-utilities/` |
 | SKILL_AUTHORING | Rule file: how to author skills | `Standard Configs/claude-md/templates/global/SKILL_AUTHORING.md` |
 | stack-profiles | 11 per-stack addenda + a SessionStart detector | `Standard Configs/claude-core/stack-profiles/` |
 | repo-scaffold + NEW_REPO_BOOTSTRAP | `/scaffold-repo` slash command + CLI, and its rule file | `Standard Configs/claude-core/repo-scaffold/` + snapshot |

@@ -2,7 +2,7 @@
 
 **Purpose**: Non-negotiable rules for how Claude interacts with GitHub. Enforces structured surfaces (templates, native relationships, `gh` CLI) over freeform prose and direct web-API calls.
 
-Runtime enforcement lives in [`claude-plugins/github-utilities/`](../../../claude-plugins/github-utilities/) — a Stop hook that blocks turn-end when a web-API call slipped past `gh`, plus the `gh-issue-rel` CLI that covers the one gap `gh` leaves. See §5 below for the escape hatch.
+Runtime enforcement lives in [`plugins/github-utilities/`](../plugins/github-utilities/) — a Stop hook that blocks turn-end when a web-API call slipped past `gh`, plus the `gh-issue-rel` CLI that covers the one gap `gh` leaves. See §5 below for the escape hatch.
 
 ## Issues — non-negotiable
 
@@ -34,7 +34,7 @@ Use the high-level `gh` subcommands for every GitHub interaction:
 | Repo metadata, releases, workflows | `gh repo view`, `gh release ...`, `gh workflow ...` |
 | Native sub-issues + blocked-by dependencies | `gh-issue-rel sub-add N M` / `sub-list N` / `block-add N M` / `block-list N` / `show N` |
 
-**`gh-issue-rel` is the sanctioned surface for issue relationships.** Sub-issues and blocked-by dependencies are the one thing `gh`'s high-level subcommands don't reach — they exist only on REST. `gh-issue-rel` wraps them, so relationship work needs **no** `gh api` and **no** escape token. It also handles the footgun: the add endpoints take the related issue's **database `id`**, not its issue number, and a hand-rolled `-F sub_issue_id=12` silently targets the wrong issue. Never hand-roll these calls; run `gh-issue-rel`. Add `-R owner/name` when you're not standing in the target repo. Ships with [`claude-plugins/github-utilities/`](../../../claude-plugins/github-utilities/).
+**`gh-issue-rel` is the sanctioned surface for issue relationships.** Sub-issues and blocked-by dependencies are the one thing `gh`'s high-level subcommands don't reach — they exist only on REST. `gh-issue-rel` wraps them, so relationship work needs **no** `gh api` and **no** escape token. It also handles the footgun: the add endpoints take the related issue's **database `id`**, not its issue number, and a hand-rolled `-F sub_issue_id=12` silently targets the wrong issue. Never hand-roll these calls; run `gh-issue-rel`. Add `-R owner/name` when you're not standing in the target repo. Ships with [`plugins/github-utilities/`](../plugins/github-utilities/).
 
 **Forbidden surfaces:**
 
