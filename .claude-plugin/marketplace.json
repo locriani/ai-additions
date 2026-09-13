@@ -1,0 +1,9 @@
+{
+  "name": "ai-additions",
+  "description": "Zach Gardner's portable Claude Code behaviour additions",
+  "owner": {
+    "name": "Zach Gardner",
+    "email": "locriani@gmail.com"
+  },
+  "plugins": []
+}
