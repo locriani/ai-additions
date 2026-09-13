@@ -1,0 +1,15 @@
+{
+  "description": "Block turn-end on a write that crossed into another worktree of the same repo.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/env python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/worktree-guard.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

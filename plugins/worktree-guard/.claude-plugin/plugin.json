@@ -1,0 +1,11 @@
+{
+  "name": "worktree-guard",
+  "description": "Stop-hook auditor for the worktree-isolation rule: blocks turn-end when a write targeted a path inside another worktree of the same repo (the main checkout or a sibling), covering both structured write tools and Bash redirections/write-verbs.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Zach Gardner",
+    "email": "locriani@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["worktree", "git", "hooks", "guard", "isolation"]
+}

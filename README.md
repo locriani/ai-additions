@@ -3,8 +3,12 @@
 Portable Claude Code behaviour additions — skills, hooks, and MCP servers that
 change how Claude *works*, independent of any one machine.
 
-**Status: empty.** The repo exists; nothing has been added to it yet. See
+**Status: six items added, none enabled.** See
 [`SETUP-LIST.md`](SETUP-LIST.md) for what is approved, pending, and declined.
+
+*Added* and *enabled* are separate states here. An addition is in the repo,
+versioned, and registered where a marketplace entry applies — and installed
+nowhere, switched on nowhere. Enabling is its own approval.
 
 ## Why this is separate from Standard Configs
 
@@ -27,9 +31,11 @@ registered in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.jso
 
 ```
 ai-additions/
-├── .claude-plugin/marketplace.json   ← the registry ("plugins": [] today)
+├── .claude-plugin/marketplace.json   ← the registry
 ├── SETUP-LIST.md                     ← the approval ledger; read this first
-└── plugins/                          ← one directory per approved addition
+├── plugins/                          ← plugins: skills, hooks, MCP servers
+├── rules/                            ← prose rule documents, verbatim copies
+└── referenced/                       ← pointers to items with their own repos
 ```
 
 Marketplace rather than a loose file collection because `claude plugin

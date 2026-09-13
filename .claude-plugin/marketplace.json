@@ -5,5 +5,16 @@
     "name": "Zach Gardner",
     "email": "locriani@gmail.com"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "worktree-guard",
+      "description": "Stop hook blocking writes that cross into another worktree of the same repo.",
+      "version": "1.0.0",
+      "source": "./plugins/worktree-guard",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
+    }
+  ]
 }
