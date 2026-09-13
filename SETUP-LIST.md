@@ -24,7 +24,15 @@ has actually been given, and record the wording that granted it.
 
 | Item | Approved on | Wording | Status |
 |---|---|---|---|
-| *(none yet)* | | | |
+| `CRAFT_VS_YAGNI` | 2026-09-13 | "CRAFT_VS_YAGNI - add, but keep to side" | Blocked — "keep to side" not yet defined |
+| `PLAN_AUDIT` | 2026-09-13 | "as well as plan audit" (under the same "add, but keep to side") | Blocked — same |
+| `CEILINGS` | 2026-09-13 | "as well as ... ceilings" (same) | Blocked — same |
+| `worktree-guard` | 2026-09-13 | "as well as ... worktree-guard" (same) | Blocked — same |
+| `github` | 2026-09-13 | "as well as ... github" (same) | Blocked — same, plus scope: `GITHUB.md` alone or + `github-utilities`? |
+
+> **Approved but not built.** Every row above carries the qualifier *"keep to
+> side"*, which has not been pinned to a mechanism yet. Per Rule 0 these are not
+> to be built speculatively — approval granted the item, not a shape for it.
 
 ## Pending — discussed, NOT approved
 
