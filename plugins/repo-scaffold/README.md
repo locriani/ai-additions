@@ -15,15 +15,36 @@ Both call `scaffold-new-repo.sh`. The per-stack content lives in `dirs/`,
 When `--stack` or the target directory is missing, it asks in plain text with
 numbered options rather than guessing.
 
-## Enabling takes more than installing
+## Two entry points, one install
 
-Installing the plugin registers the slash command. `bin/scaffold-repo` is a CLI
-and a plugin cannot put a binary on `PATH`, so the shim needs linking separately
-if you want the non-slash entry point:
+Installing the plugin registers the `/scaffold-repo` slash command *and* makes
+`scaffold-repo` a bare command: `bin/` is the default executables location, which
+Claude Code adds to the Bash tool's `PATH` while the plugin is enabled.
 
-```sh
-ln -s "$PWD/bin/scaffold-repo" ~/.local/bin/scaffold-repo
+Earlier revisions claimed a plugin cannot put a binary on `PATH` and prescribed a
+`ln -s` into `~/.local/bin`. That was wrong; nothing needs linking.
+
+## Known defect — the shim does not run as a plugin
+
+`PATH` is not this plugin's problem. Both entry points still fail on a clean
+install, because both point into Standard Configs' deploy layout rather than at
+anything the plugin ships:
+
 ```
+bin/scaffold-repo          execs $HOME/.local/share/repo-scaffold/scaffold-new-repo.sh
+commands/scaffold-repo.md  names ~/.local/bin/scaffold-repo
+plugin ships              ./scaffold-new-repo.sh          <- the real script, unreferenced
+```
+
+`apply.py` created both of those paths at deploy time in Standard Configs. A
+plugin install creates neither, so the shim execs a missing file and the slash
+command names a missing command — while the script they both want sits in the
+plugin root, reachable as `${CLAUDE_PLUGIN_ROOT}/scaffold-new-repo.sh`.
+
+This is the same class of error as a `SKILL.md` hard-coding `~/.claude/skills/`:
+a path that exists on the authoring machine and nowhere after install. Recorded,
+not fixed — converting the shim and the command to `${CLAUDE_PLUGIN_ROOT}` is a
+behaviour change, and this plugin is not enabled.
 
 ## Status
 

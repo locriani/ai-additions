@@ -86,11 +86,21 @@ approval, and for several it is more than one step (see the notes).
 - **`skill-perf` and its judge are split across two plugins.** The judge is the
   `skill-perf-judge` skill inside `extras`. Enabling either alone gives a working
   half — capture with nothing scoring it, or a judge with nothing to read.
-- **Three plugins need a second step beyond installing.** `skill-perf` needs its
+- **Two plugins need a second step beyond installing.** `skill-perf` needs its
   database created and `schema.sql` deployed to `~/.claude/skill-perf/`;
-  `stack-profiles` needs its profiles deployed to `~/.claude/stacks/`;
-  `github-utilities` and `repo-scaffold` each ship a CLI that a plugin cannot put
-  on `PATH`. Each plugin README says so.
+  `stack-profiles` needs its profiles deployed to `~/.claude/stacks/`. Each plugin
+  README says so.
+- **The CLIs are not a third case.** `github-utilities` and `repo-scaffold` each
+  keep their executable at the default `bin/` location, which Claude Code adds to
+  the Bash tool's `PATH` while the plugin is enabled — bare `gh-issue-rel` and
+  `scaffold-repo` resolve on install, with nothing to link. This file previously
+  asserted the opposite; it was wrong, and so were both READMEs.
+- **`repo-scaffold` does not run as a plugin.** Its `bin/` shim execs
+  `~/.local/share/repo-scaffold/scaffold-new-repo.sh` and its slash command names
+  `~/.local/bin/scaffold-repo` — both Standard Configs deploy paths that `apply.py`
+  created and a plugin install does not, while the real script sits unreferenced in
+  the plugin root. Found 2026-09-15 while correcting the `PATH` claim. Recorded, not
+  fixed: the repair is a behaviour change and the plugin is not enabled.
 - **`GITHUB.md` is the only rule file not byte-identical** — two links repaired
   to point at `plugins/github-utilities/`. Paths only, no prose.
 - **`security-guidance` now has two owners.** It is also in Standard Configs'

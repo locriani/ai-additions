@@ -27,17 +27,15 @@ fix.
 
 **Not enabled.** Registered in this marketplace, installed nowhere.
 
-Note that enabling has **two** steps, not one — installing the plugin wires the
-Stop hook, but `gh-issue-rel` has to reach `PATH` separately (the hook's guidance
-and the rule both name the bare command). Something like:
+Installing is the whole install. The Stop hook is wired by `hooks/hooks.json`,
+and `bin/gh-issue-rel` sits at the default `bin/` location, which Claude Code
+adds to the Bash tool's `PATH` while the plugin is enabled — so the bare command
+the hook's guidance and `GITHUB.md` both name resolves without linking anything.
 
-```sh
-ln -s "$PWD/bin/gh-issue-rel" ~/.local/bin/gh-issue-rel
-```
-
-A plugin cannot put a binary on `PATH`, so a plugin install alone leaves the
-wrapper unreachable while the hook is busy telling you to use it — worth knowing
-before enabling either half.
+Earlier revisions of this file claimed a plugin cannot put a binary on `PATH` and
+prescribed `ln -s "$PWD/bin/gh-issue-rel" ~/.local/bin/`. That was wrong, and the
+symlink is worse than unnecessary: it outlives `plugin disable`, leaving a bare
+command still reachable and pointing into a checkout after the plugin is off.
 
 ## Provenance
 
