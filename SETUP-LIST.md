@@ -39,6 +39,7 @@ approval, and for several it is more than one step (see the notes).
 | `extras` | 2026-09-13 | "pending list so far is approved" | No |
 | `stack-profiles` | 2026-09-13 | "pending list so far is approved" | No |
 | `repo-scaffold` | 2026-09-13 | "pending list so far is approved" | No |
+| `prd-design` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
 
 ### Rules — `rules/`, copied verbatim, deployed nowhere
 
@@ -61,6 +62,9 @@ approval, and for several it is more than one step (see the notes).
 | `atuin` | 2026-09-13 | "add atuin to the new set" | No |
 | `security-guidance@claude-plugins-official` | 2026-09-13 | "let's add security-guidance@claude-plugins-official and superpowers@" | No |
 | `superpowers@claude-plugins-official` | 2026-09-13 | same | No |
+| `mattpocock-skills` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
+| `yoke` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
+| `terminalskills` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
 
 ### Open — approved, shape unresolved
 
@@ -92,6 +96,8 @@ approval, and for several it is more than one step (see the notes).
 - **`security-guidance` now has two owners.** It is also in Standard Configs'
   `external/claude-plugins/templates/plugin-set.txt`. Deduplicate before either
   is enabled.
+- **The tracer-bullet fold-in is an acceptance criterion, not a preference.** Whichever issue-tracking candidate is eventually chosen must state the vertical-slice rule explicitly in its decomposition step — a slice cuts every layer, a layer is not a slice. `prd-design` already does. Written down because "fold it in" is otherwise lost by the time the pick is made.
+- **All three issue-tracking candidates share one blocker:** they publish blocking edges as prose, which `rules/GITHUB.md` forbids in favour of native links via `gh-issue-rel`. Adopting any of them means replacing its publish step. `mattpocock-skills` is closest — it computes the dependency graph correctly and only lands it wrong.
 - **Two items look misfiled and are recorded where they were approved, not where
   they may belong.** `atuin` is a Homebrew CLI with no Claude surface at all;
   `claude-statusline` is Rust plus two binaries plus a LaunchAgent. Both read as
@@ -107,4 +113,4 @@ approval, and for several it is more than one step (see the notes).
 
 | Item | Reason |
 |---|---|
-| *(none yet)* | |
+| standalone `tracer-bullets` skill | Redundant with ordered vertical-slice decomposition, which already enforces the discipline. `dividedby/skills` built one and filed it under `.out-of-scope` for the same reason. Folded into `prd-design` instead. **Reversal condition:** a demonstrated gap the pipeline does not close — tickets routinely inflating into horizontal layers despite thin, ordered slices. |

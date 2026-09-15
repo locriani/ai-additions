@@ -1,0 +1,17 @@
+{
+  "name": "prd-design",
+  "description": "Skill: interview before writing a PRD — six fixed questions, gaps marked rather than filled, and the work decomposed into ordered vertical slices whose first entry is a tracer bullet.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Zach Gardner",
+    "email": "locriani@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "prd",
+    "spec",
+    "requirements",
+    "vertical-slice",
+    "tracer-bullet"
+  ]
+}

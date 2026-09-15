@@ -47,6 +47,16 @@
       }
     },
     {
+      "name": "prd-design",
+      "description": "Skill: interview before writing a PRD, then decompose into ordered vertical slices led by a tracer bullet.",
+      "version": "1.0.0",
+      "source": "./plugins/prd-design",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
+    },
+    {
       "name": "repo-scaffold",
       "description": "/scaffold-repo command and CLI for one-shot per-stack new-repo scaffolding.",
       "version": "1.0.0",

@@ -17,3 +17,6 @@ Nothing here is installed or enabled by being listed. See
 | [`claude-statusline`](claude-statusline.md) | [`locriani/claude-statusline`](https://github.com/locriani/claude-statusline) | Rust binaries + LaunchAgent | 2026-09-13 |
 | [`atuin`](atuin.md) | [`atuinsh/atuin`](https://github.com/atuinsh/atuin) | Homebrew CLI | 2026-09-13 |
 | [`upstream-plugins`](upstream-plugins.md) | `claude-plugins-official` | `security-guidance`, `superpowers` | 2026-09-13 |
+| [`mattpocock-skills`](mattpocock-skills.md) | [`mattpocock/skills`](https://github.com/mattpocock/skills) | Skills — `to-spec`, `to-tickets` | 2026-09-15 |
+| [`yoke`](yoke.md) | [`yokeloop/yoke`](https://github.com/yokeloop/yoke) | Plugin — 14 commands incl. `/prd`, `/issues` | 2026-09-15 |
+| [`terminalskills`](terminalskills.md) | [`TerminalSkills/skills`](https://github.com/TerminalSkills/skills) | Skill — `prd-to-issues` | 2026-09-15 |
