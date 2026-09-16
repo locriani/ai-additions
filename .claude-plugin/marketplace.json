@@ -57,6 +57,16 @@
       }
     },
     {
+      "name": "mermaid-system-design",
+      "description": "Skill: fix the shape and edge vocabulary before drawing a system architecture in Mermaid, then render every diagram before shipping it.",
+      "version": "1.0.0",
+      "source": "./plugins/mermaid-system-design",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
+    },
+    {
       "name": "prd-design",
       "description": "Skill: interview before writing a PRD, then decompose into ordered vertical slices led by a tracer bullet.",
       "version": "1.0.0",
