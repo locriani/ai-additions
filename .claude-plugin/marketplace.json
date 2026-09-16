@@ -9,7 +9,7 @@
     {
       "name": "codebase-audit",
       "description": "Skill: audit a codebase you did not write before building on it \u2014 run it before you read it, cite evidence, and hunt the defects whose exit status says success.",
-      "version": "1.4.0",
+      "version": "1.4.1",
       "source": "./plugins/codebase-audit",
       "author": {
         "name": "Zach Gardner",
