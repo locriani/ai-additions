@@ -27,6 +27,13 @@ Claude Code.** Present, versioned, registered where a marketplace entry applies 
 but installed nowhere and switched on nowhere. Enabling each is a separate
 approval, and for several it is more than one step (see the notes).
 
+A second exception followed on 2026-09-15: `codebase-audit` was approved and enabled in the same
+instruction, because the instruction was to build the skill *and* run it — "then use it to produce
+AUDIT.md" — and keep-to-side would not have satisfied it. Approval named the item as `emr-audit`;
+the name was changed to `codebase-audit` during the same exchange, on Zach's ruling that the tool
+is general rather than EMR-specific. Recorded under the name it actually ships as, since a ledger
+row pointing at a directory that does not exist is worse than an imprecise quote.
+
 ### Plugins — `plugins/`, registered in `marketplace.json`
 
 | Item | Approved | Wording | Enabled |
@@ -40,6 +47,7 @@ approval, and for several it is more than one step (see the notes).
 | `stack-profiles` | 2026-09-13 | "pending list so far is approved" | No |
 | `repo-scaffold` | 2026-09-13 | "pending list so far is approved" | No |
 | `prd-design` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
+| `codebase-audit` | 2026-09-15 | "Build an ... Claude Code skill + audit subagent, then use it to produce AUDIT.md" | **Yes** — installed from the local marketplace |
 
 ### Rules — `rules/`, copied verbatim, deployed nowhere
 
