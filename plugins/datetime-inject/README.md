@@ -23,7 +23,7 @@ ignores its stdin.
 
 ## Status
 
-**Not enabled.** Registered in this marketplace, installed nowhere.
+**Enabled** 2026-09-16 on "datetime-inject logic-rendering are approved for enabling": `claude plugin install datetime-inject@ai-additions`, user scope.
 
 ## Provenance
 

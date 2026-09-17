@@ -3,7 +3,7 @@
 Plugins from marketplaces this repo does not own. Nothing to vendor and nothing
 to clone — they are named as `<plugin>@<marketplace>` and installed from there.
 
-**Status: referenced, not installed.** None of the commands below has been run.
+**Status:** `security-guidance` installed 2026-09-16 (user scope) on "reference-points, claude-statusline, atuin, security-guidance, are approved for enabling". `superpowers` referenced, not installed.
 
 | Plugin | Marketplace | Approved |
 |---|---|---|

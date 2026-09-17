@@ -2,7 +2,7 @@
 
 **Upstream:** [`locriani/reference-points`](https://github.com/locriani/reference-points) (public)
 **Local checkout:** `~/Developer/reference-points`
-**Status:** referenced, not installed.
+**Status:** installed and enabled 2026-09-16 (user scope) on "reference-points, claude-statusline, atuin, security-guidance, are approved for enabling".
 
 *Called "section rendering" early in development; `reference-points` is the
 canonical name.*
@@ -31,11 +31,11 @@ reference-points turns "$S"
 reference-points resolve 'N27-S1.T2.3' "$S" -T
 ```
 
-## Install (when enabled)
+## Install
 
 ```sh
 claude plugin marketplace add locriani/reference-points
 claude plugin install reference-points@reference-points
 ```
 
-Nothing above has been run.
+Run 2026-09-16.

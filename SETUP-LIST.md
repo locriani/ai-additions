@@ -47,8 +47,8 @@ Every other row is still keep-to-side.
 |---|---|---|---|
 | `worktree-guard` | 2026-09-13 | "as well as ... worktree-guard" | No |
 | `github-utilities` | 2026-09-13 | "oh add github utilities" | No |
-| `datetime-inject` | 2026-09-13 | "pending list so far is approved" | No |
-| `logic-rendering` | 2026-09-13 | "pending list so far is approved" | No |
+| `datetime-inject` | 2026-09-13 | "pending list so far is approved" | **Yes** — 2026-09-16, "datetime-inject logic-rendering are approved for enabling": `claude plugin install datetime-inject@ai-additions` (user scope, 1.0.0) |
+| `logic-rendering` | 2026-09-13 | "pending list so far is approved" | **Yes** — 2026-09-16, "datetime-inject logic-rendering are approved for enabling": `claude plugin install logic-rendering@ai-additions` (user scope, 1.0.0) |
 | `skill-perf` | 2026-09-13 | "pending list so far is approved" | No |
 | `extras` | 2026-09-13 | "pending list so far is approved" | No |
 | `stack-profiles` | 2026-09-13 | "pending list so far is approved" | No |
@@ -61,9 +61,9 @@ Every other row is still keep-to-side.
 
 | Item | Approved | Wording | Enabled |
 |---|---|---|---|
-| `CRAFT_VS_YAGNI` | 2026-09-13 | "CRAFT_VS_YAGNI - add, but keep to side" | No |
-| `PLAN_AUDIT` | 2026-09-13 | "as well as plan audit" | No |
-| `CEILINGS` | 2026-09-13 | "as well as ... ceilings" | No |
+| `CRAFT_VS_YAGNI` | 2026-09-13 | "CRAFT_VS_YAGNI - add, but keep to side" | **Deployed** — 2026-09-16, "install CRAFT_VS_YAGNI, PLAN_AUDIT, CEILINGS": copied verbatim to `~/.claude/CRAFT_VS_YAGNI.md`. Inert until a `~/.claude/CLAUDE.md` references it; none exists on this machine |
+| `PLAN_AUDIT` | 2026-09-13 | "as well as plan audit" | **Deployed** — 2026-09-16, "install CRAFT_VS_YAGNI, PLAN_AUDIT, CEILINGS": copied verbatim to `~/.claude/PLAN_AUDIT.md`. Inert until a `~/.claude/CLAUDE.md` references it; none exists on this machine |
+| `CEILINGS` | 2026-09-13 | "as well as ... ceilings" | **Deployed** — 2026-09-16, "install CRAFT_VS_YAGNI, PLAN_AUDIT, CEILINGS": copied verbatim to `~/.claude/CEILINGS.md`. Inert until a `~/.claude/CLAUDE.md` references it; none exists on this machine |
 | `GITHUB` | 2026-09-13 | "as well as ... github" | No |
 | `SKILL_AUTHORING` | 2026-09-13 | "pending list so far is approved" | No |
 | `NEW_REPO_BOOTSTRAP` | 2026-09-13 | "pending list so far is approved" | No |
@@ -73,10 +73,10 @@ Every other row is still keep-to-side.
 | Item | Approved | Wording | Enabled |
 |---|---|---|---|
 | `asking-protocol` | 2026-09-13 | "pending list so far is approved" | No — MCP to stay **disabled** |
-| `reference-points` | 2026-09-13 | "pending list so far is approved" | No |
-| `claude-statusline` | 2026-09-13 | "also add the entry for the statusline for claude code please" | No |
-| `atuin` | 2026-09-13 | "add atuin to the new set" | No |
-| `security-guidance@claude-plugins-official` | 2026-09-13 | "let's add security-guidance@claude-plugins-official and superpowers@" | No |
+| `reference-points` | 2026-09-13 | "pending list so far is approved" | **Yes** — 2026-09-16, "reference-points, claude-statusline, atuin, security-guidance, are approved for enabling": `claude plugin marketplace add locriani/reference-points` + `claude plugin install reference-points@reference-points` (user scope) |
+| `claude-statusline` | 2026-09-13 | "also add the entry for the statusline for claude code please" | **Yes** — 2026-09-16, "reference-points, claude-statusline, atuin, security-guidance, are approved for enabling": `~/Developer/claude-statusline/launchd/install.sh` (release build, binaries in `~/.local/bin`, `~/.claude/statusline` symlink, LaunchAgent `local.claude-statusline.collector` running) |
+| `atuin` | 2026-09-13 | "add atuin to the new set" | **Yes** — 2026-09-16, "reference-points, claude-statusline, atuin, security-guidance, are approved for enabling": already `brew install`ed (18.22.0); `eval "$(atuin init zsh)"` appended to `~/.zshrc`; `atuin import auto` (344 entries) |
+| `security-guidance@claude-plugins-official` | 2026-09-13 | "let's add security-guidance@claude-plugins-official and superpowers@" | **Yes** — 2026-09-16, "reference-points, claude-statusline, atuin, security-guidance, are approved for enabling": `claude plugin install security-guidance@claude-plugins-official` (user scope) |
 | `superpowers@claude-plugins-official` | 2026-09-13 | same | No |
 | `mattpocock-skills` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
 | `yoke` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |

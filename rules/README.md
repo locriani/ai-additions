@@ -3,9 +3,9 @@
 Prose rule documents, copied **verbatim** from
 `Standard Configs/claude-core/claude-md/templates/global/` at `d36d794`.
 
-## Status: present, not deployed
+## Status: three deployed, three not
 
-These files are in the repo. Nothing deploys them. In Standard Configs they are
+`CRAFT_VS_YAGNI`, `PLAN_AUDIT`, `CEILINGS` were copied verbatim to `~/.claude/<NAME>.md` on 2026-09-16 ("install CRAFT_VS_YAGNI, PLAN_AUDIT, CEILINGS"). No `~/.claude/CLAUDE.md` exists on this machine to reference them, so they are present but inert until one does. The other three: nothing deploys them. In Standard Configs they are
 written to `~/.claude/<NAME>.md` by `pair-map.sh` and reached through the frame's
 reference index; here they are content only, and enabling them is a separate
 decision. See [`../SETUP-LIST.md`](../SETUP-LIST.md).

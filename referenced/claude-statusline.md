@@ -2,7 +2,7 @@
 
 **Upstream:** [`locriani/claude-statusline`](https://github.com/locriani/claude-statusline)
 **Local checkout:** `~/Developer/claude-statusline`
-**Status:** referenced, not installed.
+**Status:** installed 2026-09-16 on "reference-points, claude-statusline, atuin, security-guidance, are approved for enabling": binaries in `~/.local/bin`, `~/.claude/statusline` symlinked, collector LaunchAgent running.
 
 A three-line [Claude Code status line](https://docs.claude.com/en/docs/claude-code/statusline)
 for macOS — directory, session, git, model, machine vitals, context and
@@ -29,7 +29,7 @@ portable Claude behaviour, so `Standard Configs` may be its more natural owner.
 It is recorded here because it was approved here; the split is a live question,
 not a settled one.
 
-## Install (when enabled)
+## Install
 
 Requires macOS and a Rust toolchain (`brew install rust`).
 
@@ -46,4 +46,4 @@ plist, points `~/.claude/statusline` at the render binary, and starts the agent.
 Everything runs from the installed copies, so the build tree can be cleaned or
 moved afterward. `./launchd/uninstall.sh` reverses all of it.
 
-Nothing above has been run as part of adding this entry.
+Run 2026-09-16 from the existing checkout (`git clone` skipped; `~/Developer/claude-statusline` was already present). `~/.local/bin` is not on `PATH`; nothing here needs it to be.
