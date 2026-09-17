@@ -2,7 +2,7 @@
 
 **Upstream:** [`locriani/chief-of-stuff`](https://github.com/locriani/chief-of-stuff) (private)
 **Local checkout:** `~/Developer/chief-of-stuff`
-**Status:** installed and enabled 2026-09-16 (user scope) on "chief of stuff is approved for enabling"; updated to 0.2.0 the same evening (filing moves within PARA, Config rule) and to 0.3.0 (the board: a task list and Gantt artifact rendered from the tracker by `scripts/render_board.py`, republished after every tracker edit).
+**Status:** installed and enabled 2026-09-16 (user scope) on "chief of stuff is approved for enabling"; updated to 0.2.0 the same evening (filing moves within PARA, Config rule) and to 0.3.0 (the board: a task list and Gantt artifact rendered from the tracker by `scripts/render_board.py`, republished after every tracker edit); 0.3.1 on 2026-09-17 (the board draws the schedule only: unscheduled lanes fold into summary rows, deadline lines sit on the chart, long item histories open as one line per clause).
 
 A Claude Code plugin that ships one agent, `chief-of-stuff`, meant to run as the
 **main session**: `claude --agent chief-of-stuff`. It coordinates the user's day
