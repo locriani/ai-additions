@@ -18,5 +18,6 @@ Nothing here is installed or enabled by being listed. See
 | [`atuin`](atuin.md) | [`atuinsh/atuin`](https://github.com/atuinsh/atuin) | Homebrew CLI | 2026-09-13 |
 | [`upstream-plugins`](upstream-plugins.md) | `claude-plugins-official` | `security-guidance`, `superpowers` | 2026-09-13 |
 | [`mattpocock-skills`](mattpocock-skills.md) | [`mattpocock/skills`](https://github.com/mattpocock/skills) | Skills — `to-spec`, `to-tickets` | 2026-09-15 |
+| [`chief-of-stuff`](chief-of-stuff.md) | [`locriani/chief-of-stuff`](https://github.com/locriani/chief-of-stuff) | Plugin (private repo) — one main-session agent | 2026-09-16 |
 | [`yoke`](yoke.md) | [`yokeloop/yoke`](https://github.com/yokeloop/yoke) | Plugin — 14 commands incl. `/prd`, `/issues` | 2026-09-15 |
 | [`terminalskills`](terminalskills.md) | [`TerminalSkills/skills`](https://github.com/TerminalSkills/skills) | Skill — `prd-to-issues` | 2026-09-15 |
