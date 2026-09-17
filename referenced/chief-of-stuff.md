@@ -2,7 +2,7 @@
 
 **Upstream:** [`locriani/chief-of-stuff`](https://github.com/locriani/chief-of-stuff) (private)
 **Local checkout:** `~/Developer/chief-of-stuff`
-**Status:** installed and enabled 2026-09-16 (user scope) on "chief of stuff is approved for enabling"; updated to 0.2.0 the same evening (filing moves within PARA, Config rule) and to 0.3.0 (the board: a task list and Gantt artifact rendered from the tracker by `scripts/render_board.py`, republished after every tracker edit); 0.3.1 on 2026-09-17 (the board draws the schedule only: unscheduled lanes fold into summary rows, deadline lines sit on the chart, long item histories open as one line per clause); 0.4.0 the same morning (coordinator voice: routing and verifying only, relays that never restate the coordinator's limits, decision-only asks, Decisions rows that lift workspace rules, clock-read timestamps; mock peer sessions in the evals); 0.4.1 (requirement checklists: a deadline may name a requirements file, the board shows it with a done count, the coordinator ticks items with evidence); 0.4.2 (Week chart by day: at most 7 days, lanes grouped by due day, deadline callouts on their own rows); 0.4.3 (the Chief of Stuff brand: the painting's palette in light and dark, Cormorant SC and Alegreya Sans, the logo inlined in the header).
+**Status:** installed and enabled 2026-09-16 (user scope) on "chief of stuff is approved for enabling"; updated to 0.2.0 the same evening (filing moves within PARA, Config rule) and to 0.3.0 (the board: a task list and Gantt artifact rendered from the tracker by `scripts/render_board.py`, republished after every tracker edit); 0.3.1 on 2026-09-17 (the board draws the schedule only: unscheduled lanes fold into summary rows, deadline lines sit on the chart, long item histories open as one line per clause); 0.4.0 the same morning (coordinator voice: routing and verifying only, relays that never restate the coordinator's limits, decision-only asks, Decisions rows that lift workspace rules, clock-read timestamps; mock peer sessions in the evals); 0.4.1 (requirement checklists: a deadline may name a requirements file, the board shows it with a done count, the coordinator ticks items with evidence); 0.4.2 (Week chart by day: at most 7 days, lanes grouped by due day, deadline callouts on their own rows); 0.4.3 (the Chief of Stuff brand: the painting's palette in light and dark, Cormorant SC and Alegreya Sans, the logo inlined in the header); 0.5.0 (sessions: an `orphaned` lane state for work whose owner has left the registry, `unassigned` as an owner distinct from the user, Assign polls before it assigns, a Brief move, idle notices read as clock references rather than state, non-owner state changes recorded with the reporter named, and on the board gridlines, a legend, and counted lane group headers).
 
 A Claude Code plugin that ships one agent, `chief-of-stuff`, meant to run as the
 **main session**: `claude --agent chief-of-stuff`. It coordinates the user's day
@@ -21,7 +21,7 @@ it proposes one and creates nothing.
 ## Evals
 
 `evals/run.py` drives real `claude -p` in a sandbox (temp cwd, no user MCP, a
-mock calendar server, `railway` and `git commit|add|push` denied). 30 cases,
+mock calendar server, `railway` and `git commit|add|push` denied). 36 cases,
 each red without the agent (some graders non-discriminating, kept as guards) and green with it on Opus x3. Record:
 `evals/results/PROGRESS.md`.
 
