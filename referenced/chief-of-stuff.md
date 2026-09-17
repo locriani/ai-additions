@@ -2,7 +2,7 @@
 
 **Upstream:** [`locriani/chief-of-stuff`](https://github.com/locriani/chief-of-stuff) (private)
 **Local checkout:** `~/Developer/chief-of-stuff`
-**Status:** installed and enabled 2026-09-16 (user scope, 0.1.0) on "chief of stuff is approved for enabling".
+**Status:** installed and enabled 2026-09-16 (user scope) on "chief of stuff is approved for enabling"; updated to 0.2.0 the same evening (filing moves within PARA, Config rule).
 
 A Claude Code plugin that ships one agent, `chief-of-stuff`, meant to run as the
 **main session**: `claude --agent chief-of-stuff`. It coordinates the user's day
@@ -15,13 +15,14 @@ context only on the user's explicit yes. Pinned to Opus.
 
 A `## Coordinator` block in the workspace `CLAUDE.md`: log dir, tracker path,
 template, timezone, calendar tool and calendar ids, deadlines, human-only action
-classes. The agent never carries workspace values itself.
+classes. The agent never carries workspace values itself; if the block is missing
+it proposes one and creates nothing.
 
 ## Evals
 
 `evals/run.py` drives real `claude -p` in a sandbox (temp cwd, no user MCP, a
-mock calendar server, `railway` and `git commit|add|push` denied). 15 cases,
-each red without the agent and green with it on Opus x3. Record:
+mock calendar server, `railway` and `git commit|add|push` denied). 18 cases,
+each red without the agent (one non-discriminating, kept as a guard) and green with it on Opus x3. Record:
 `evals/results/PROGRESS.md`.
 
 ## Install
