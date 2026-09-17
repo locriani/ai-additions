@@ -2,7 +2,7 @@
 
 **Upstream:** [`locriani/chief-of-stuff`](https://github.com/locriani/chief-of-stuff) (private)
 **Local checkout:** `~/Developer/chief-of-stuff`
-**Status:** referenced, not installed.
+**Status:** installed and enabled 2026-09-16 (user scope, 0.1.0) on "chief of stuff is approved for enabling".
 
 A Claude Code plugin that ships one agent, `chief-of-stuff`, meant to run as the
 **main session**: `claude --agent chief-of-stuff`. It coordinates the user's day
@@ -24,11 +24,11 @@ mock calendar server, `railway` and `git commit|add|push` denied). 15 cases,
 each red without the agent and green with it on Opus x3. Record:
 `evals/results/PROGRESS.md`.
 
-## Install (when enabled)
+## Install
 
 ```sh
 claude plugin marketplace add ~/Developer/chief-of-stuff
 claude plugin install chief-of-stuff@chief-of-stuff
 ```
 
-Nothing above has been run.
+Run 2026-09-16. The installed copy is a version-stamped snapshot under `~/.claude/plugins/cache/`; after editing the checkout, `claude plugin marketplace update chief-of-stuff` and reinstall.

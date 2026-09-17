@@ -81,7 +81,7 @@ Every other row is still keep-to-side.
 | `mattpocock-skills` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
 | `yoke` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
 | `terminalskills` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
-| `chief-of-stuff` | 2026-09-16 | "Ok then create this as a sidecar repo like reference-points that will get referred to in ai-additions." | No — sidecar `locriani/chief-of-stuff` (private), checkout `~/Developer/chief-of-stuff`, built (stage 2 green on Opus, 2026-09-16); pointer `referenced/chief-of-stuff.md` written; not installed |
+| `chief-of-stuff` | 2026-09-16 | "Ok then create this as a sidecar repo like reference-points that will get referred to in ai-additions." | **Yes** — 2026-09-16, "chief of stuff is approved for enabling": `claude plugin marketplace add ~/Developer/chief-of-stuff` + `claude plugin install chief-of-stuff@chief-of-stuff` (user scope, 0.1.0). Sidecar `locriani/chief-of-stuff` (private), checkout `~/Developer/chief-of-stuff` |
 
 ### Open — approved, shape unresolved
 
