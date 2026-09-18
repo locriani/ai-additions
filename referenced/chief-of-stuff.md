@@ -21,7 +21,7 @@ it proposes one and creates nothing.
 ## Evals
 
 `evals/run.py` drives real `claude -p` in a sandbox (temp cwd, no user MCP, a
-mock calendar server, `railway` and `git commit|add|push` denied). 36 cases,
+mock calendar server, a mock health server, `railway` and `git commit|add|push` denied). 42 cases,
 each red without the agent (some graders non-discriminating, kept as guards) and green with it on Opus x3. Record:
 `evals/results/PROGRESS.md`.
 
