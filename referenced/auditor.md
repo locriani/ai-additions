@@ -1,7 +1,7 @@
 # auditor (working name)
 
-**Upstream:** none yet — local only. `locriani/auditor` when Zach says so; precedent is
-`frank-lloyd-aight` public and `chief-of-stuff` private.
+**Upstream:** [`locriani/auditor`](https://github.com/locriani/auditor) (private) — created by Zach
+2026-09-19, pushed the same evening.
 **Local checkout:** `~/Developer/auditor`
 **Status:** approved and enabled 2026-09-15 as `codebase-audit`, a plugin in this repo (see
 `SETUP-LIST.md`). Extracted to its own repo 2026-09-19 and renamed, plugin id `codebase-audit` →
