@@ -7,7 +7,8 @@
 `SETUP-LIST.md`). Extracted to its own repo 2026-09-19 and renamed, plugin id `codebase-audit` →
 `auditor`, version 1.4.2 → 2.0.0. The six commits of its history came out with it via
 `git subtree split`. **The name is provisional** — Zach, 2026-09-19: *"just call it Auditor for
-now."*
+now."* Installed from the new marketplace at 2026-09-19 21:05 on *"CIMP it"*, user scope, 2.0.0,
+with `test_probe.sh` green on main first (179 passed, 0 failed, 2 skipped).
 
 A Claude Code plugin that ships the `auditor` agent and the `codebase-audit` skill. It assesses a
 codebase somebody else wrote, before work gets built on top of it: nine axes, severity from a
