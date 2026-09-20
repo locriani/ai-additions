@@ -7,16 +7,6 @@
   },
   "plugins": [
     {
-      "name": "codebase-audit",
-      "description": "Skill: audit a codebase you did not write before building on it \u2014 run it before you read it, cite evidence, and hunt the defects whose exit status says success.",
-      "version": "1.4.2",
-      "source": "./plugins/codebase-audit",
-      "author": {
-        "name": "Zach Gardner",
-        "email": "locriani@gmail.com"
-      }
-    },
-    {
       "name": "datetime-inject",
       "description": "UserPromptSubmit hook injecting per-turn local date and time.",
       "version": "1.0.0",
