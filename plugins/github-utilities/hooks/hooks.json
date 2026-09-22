@@ -1,6 +1,18 @@
 {
-  "description": "Block turn-end on a GitHub web-API call that gh's subcommands could have covered.",
+  "description": "Block a raw gh issue write whose text breaks GITHUB.md's issue rules; block turn-end on a GitHub web-API call that gh's subcommands could have covered.",
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/env python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/gh-issue-guard.py\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
