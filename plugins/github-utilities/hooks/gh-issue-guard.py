@@ -4,7 +4,8 @@ PreToolUse guard for raw `gh issue` writes, per `rules/GITHUB.md`.
 
 A Bash command that writes issue text — `gh issue create`, `comment`, `edit --title/--body`, or
 `close`/`reopen --comment` — runs only if `bin/gh-issue check` passes that text: no issue cited in
-prose, and a body that is a filled template. Anything the hook cannot read (stdin, `$(...)`, `$VAR`,
+prose, and a body that is a filled template. `gh api` is allowed where no `gh` subcommand exists, so a
+`gh api` call that writes issue text (see `gh_api_coverage.issue_text_write`) is denied outright. Anything the hook cannot read (stdin, `$(...)`, `$VAR`,
 a heredoc, an interactive flag) is denied with the way to make it readable.
 
 Fails closed: once a command is an issue write, a check that could not run is a deny, never a pass.
@@ -27,15 +28,17 @@ import sys
 import tempfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from gh_api_coverage import issue_text_write, parse, segments, strip_assignments  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 GH_ISSUE = ROOT / "bin" / "gh-issue"
 LOG_PATH = Path.home() / ".claude" / "hooks" / "gh-issue-guard.log"
 TIMEOUT = 30
 
-FAST = re.compile(r"\bgh\s+issue\s+(?:create|edit|comment|close|reopen)\b")
-ASSIGNMENT = re.compile(r"^[A-Za-z_]\w*=")
+FAST = re.compile(r"\bgh\s+(?:issue\s+(?:create|edit|comment|close|reopen)|api)\b")
 EXPANDS = re.compile(r"`|\$(?:[A-Za-z_{(]|$)")
-OPERATORS = set("();<>|&\n")
 
 VALUE_FLAGS = {
     "-t": "title", "--title": "title",
@@ -66,28 +69,9 @@ def log(msg: str) -> None:
         pass
 
 
-def segments(command: str) -> list[list[str]]:
-    """Simple commands, split at shell operators and newlines. Raises ValueError when unparseable."""
-    lex = shlex.shlex(command, posix=True, punctuation_chars="();<>|&\n")
-    lex.whitespace = " \t\r"
-    lex.whitespace_split = True
-    out, current = [], []
-    for token in lex:
-        if token and set(token) <= OPERATORS:
-            if "<<" in token:
-                current.append("<<")  # a heredoc: the text arrives on stdin
-            out.append(current)
-            current = []
-        else:
-            current.append(token)
-    out.append(current)
-    return [s for s in out if s]
-
-
 def issue_write(words: list[str]) -> tuple[str, dict, list[str], bool] | None:
     """(verb, flag values, interactive flags, heredoc) for a `gh issue <write verb>` command."""
-    while words and ASSIGNMENT.match(words[0]):
-        words = words[1:]
+    words = strip_assignments(words)
     if len(words) < 3 or words[:2] != ["gh", "issue"] or words[2] not in ("create", "edit", "comment",
                                                                           "close", "reopen"):
         return None
@@ -159,6 +143,11 @@ def _verdict(kind, repo, title, body, body_file, cwd, check) -> str | None:
 
 
 def decide_segment(words: list[str], cwd: str | None, check) -> str | None:
+    bare = strip_assignments(words)
+    if bare[:2] == ["gh", "api"]:
+        why = issue_text_write(parse(bare[2:]))
+        return (f"gh-issue-guard: {why} without the issue rules; {FILE_WITH}, or gh issue comment / "
+                "gh issue edit, which this hook checks.") if why else None
     parsed = issue_write(words)
     if parsed is None:
         return None

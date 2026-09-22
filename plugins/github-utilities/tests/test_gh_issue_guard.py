@@ -181,6 +181,35 @@ class UnreadableTest(unittest.TestCase):
         self.assertEqual(len(check.calls), 1)
 
 
+class GhApiTest(unittest.TestCase):
+    """`gh api` is allowed where no subcommand exists, so it must not become the way around the rules."""
+
+    def test_issue_text_writes_are_denied(self):
+        for command in (
+            "gh api repos/o/r/issues -f title=x -f body=y",
+            "gh api repos/o/r/issues/3/comments -f body=x",
+            "gh api graphql -f query='mutation { addComment(input: {}) { clientMutationId } }'",
+            "cd x && gh api -X PATCH repos/o/r/issues/3 -f body=y",
+        ):
+            with self.subTest(command=command):
+                check = FakeCheck()
+                reason = decide(command, check)
+                self.assertIsNotNone(reason)
+                self.assertIn("gh-issue new", reason)
+                self.assertEqual(check.calls, [])
+
+    def test_other_gh_api_passes_the_guard(self):
+        for command in ("gh api repos/o/r/contents/.github", "gh api repos/o/r/issues",
+                        "gh api repos/o/r/issues/3/sub_issues -F sub_issue_id=1"):
+            with self.subTest(command=command):
+                check = FakeCheck()
+                self.assertIsNone(decide(command, check))
+                self.assertEqual(check.calls, [])
+
+    def test_unparseable_gh_api_is_denied(self):
+        self.assertIsNotNone(decide("gh api repos/o/r/issues -f body='unbalanced"))
+
+
 class EndToEndTest(unittest.TestCase):
     """The real hook, the real `gh-issue check`. `--kind comment` needs no network."""
 

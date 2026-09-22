@@ -17,8 +17,10 @@ It reads templates from `.github/ISSUE_TEMPLATE/` with `gh api`, and parses them
 **`hooks/github-api-stop-hook.py`** — Stop hook. Scans the trailing assistant turn for GitHub web-API attempts that `gh`'s high-level subcommands could have covered, and blocks turn-end with remediation guidance:
 
 - `curl` / `wget` / `http` / `httpie` against `api.github.com` — raw REST bypass
-- `gh api …` — forces the high-level subcommands instead
+- `gh api <endpoint>` where a subcommand covers the endpoint — `COVERED` in `hooks/gh_api_coverage.py`, the one place to edit when `gh` grows a subcommand. Anywhere else `gh api` passes silently (Zach, 2026-09-22 14:50: *"allow gh api for features that are not in the CLI yet"*).
 - `WebFetch` of `github.com`
+
+The guard adds one `gh api` rule of its own: a call that writes issue text is denied, so allowing `gh api` is not the way around the issue rules.
 
 The escape hatch is an explicit `WEB-API-FALLBACK-JUSTIFIED` line in the final response. See §5 of `GITHUB.md`.
 
@@ -43,3 +45,5 @@ Earlier revisions of this file claimed a plugin cannot put a binary on `PATH` an
 Extracted from `Standard Configs/claude-plugins/github-utilities/` at `d36d794`: the Stop hook and a `gh-issue-rel` wrapper, byte-identical to their source.
 
 2.0.0 (2026-09-22) removed `gh-issue-rel`. It wrapped REST calls for sub-issues and blocked-by dependencies because `gh` had no subcommand for them; gh 2.101 has native `--parent`, `--blocked-by`, `--blocking` on `gh issue create` and `--add-sub-issue`, `--add-blocked-by`, `--add-blocking` on `gh issue edit`, which take issue numbers rather than database ids. The same release added `gh-issue` and the PreToolUse guard.
+
+2.1.0 (2026-09-22) narrowed the Stop hook's `gh api` rule to covered endpoints and made the guard deny `gh api` writes of issue text.

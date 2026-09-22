@@ -29,7 +29,7 @@
     {
       "name": "github-utilities",
       "description": "gh-issue files from templates with native relationships; a PreToolUse guard and a Stop hook enforce GITHUB.md.",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "source": "./plugins/github-utilities",
       "author": {
         "name": "Zach Gardner",

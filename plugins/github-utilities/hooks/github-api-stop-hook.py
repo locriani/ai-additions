@@ -11,7 +11,8 @@ Violations (regex against the tool_use's input):
 
   Bash `command` matches any of:
     * (curl|wget|http|httpie) ... api.github.com   → raw REST bypass
-    * gh api ...                                   → forces high-level subcommands
+    * gh api <endpoint> where a gh subcommand covers the endpoint
+      (gh_api_coverage.COVERED); an uncovered endpoint is gh api's to reach
 
   WebFetch / web_fetch / *fetch* / *navigate* / *open_url* MCP tools where
   any string-valued arg contains github.com (any subdomain or path).
@@ -35,6 +36,10 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from gh_api_coverage import api_calls, covered  # noqa: E402
+
 LOG_PATH = Path.home() / ".claude" / "hooks" / "github-api-stop-hook.log"
 
 # --- Violation patterns ---------------------------------------------------
@@ -45,7 +50,7 @@ RE_WEB_API_CLIENT = re.compile(
     re.IGNORECASE,
 )
 
-# `gh api` — even though authenticated, sidesteps the high-level subcommands.
+# `gh api` — a quick filter; `gh_api_coverage` decides whether the endpoint is covered.
 # Must follow a word boundary so `something-gh api` (unlikely) doesn't match,
 # and `gh apiserver` (also unlikely) doesn't either.
 RE_GH_API = re.compile(r"(?:^|[\s;&|`(])gh\s+api\b", re.IGNORECASE)
@@ -182,6 +187,27 @@ def _iter_string_values(obj) -> list[str]:
     return out
 
 
+def _gh_api_violations(cmd: str) -> list[dict]:
+    """One violation per `gh api` call whose endpoint a gh subcommand covers.
+
+    Zach, 2026-09-22 14:50: allow gh api for features that are not in the CLI yet. A command that
+    does not parse cannot be judged, so it stays a violation as before.
+    """
+    try:
+        calls = api_calls(cmd)
+    except ValueError:
+        return [{"tool": "Bash", "kind": "`gh api` in a command that does not parse",
+                 "evidence": _truncate(cmd, 200)}]
+    out = []
+    for call in calls:
+        sub = covered(call.endpoint)
+        if sub:
+            out.append({"tool": "Bash",
+                        "kind": f"`gh api {call.endpoint}` — covered by `{sub}`; use it",
+                        "evidence": _truncate(cmd, 200)})
+    return out
+
+
 def find_violations(tool_uses: list[dict]) -> list[dict]:
     """
     Returns a list of {"tool": str, "kind": str, "evidence": str} dicts.
@@ -203,11 +229,7 @@ def find_violations(tool_uses: list[dict]) -> list[dict]:
                         "evidence": _truncate(cmd, 200),
                     })
                 if RE_GH_API.search(cmd):
-                    violations.append({
-                        "tool": "Bash",
-                        "kind": "`gh api` — use high-level subcommands",
-                        "evidence": _truncate(cmd, 200),
-                    })
+                    violations.extend(_gh_api_violations(cmd))
             continue
 
         # Non-Bash tools: WebFetch + any MCP fetch/navigate/open_url tool.
@@ -233,7 +255,7 @@ def _truncate(s: str, n: int) -> str:
 
 def build_block_reason(violations: list[dict]) -> str:
     lines = [
-        "GitHub web-API call detected. Use `gh` high-level subcommands instead.",
+        "GitHub web-API call detected where a `gh` subcommand covers it. Use the subcommand.",
         "",
         "Violations this turn:",
     ]
@@ -245,10 +267,11 @@ def build_block_reason(violations: list[dict]) -> str:
         "Remediation:",
         "  - `gh issue ...`, `gh pr ...`, `gh repo ...`, `gh run ...`, `gh workflow ...`",
         "    cover viewing/creating/commenting on issues + PRs, repo metadata,",
-        "    workflow runs, releases. See ~/.claude/GITHUB.md for the full list.",
-        "  - If `gh`'s high-level surface genuinely doesn't cover this action",
-        "    (rare GraphQL queries, beta endpoints), end your turn's final",
-        "    response with a line:",
+        "    workflow runs, releases. See rules/GITHUB.md in ai-additions.",
+        "  - `gh api` is fine where no subcommand exists (graphql, contents,",
+        "    rulesets, ...); the covered list is hooks/gh_api_coverage.py.",
+        "  - If the subcommand genuinely can't do this particular call, end your",
+        "    turn's final response with a line:",
         "        WEB-API-FALLBACK-JUSTIFIED: <one-sentence reason>",
         "    The hook reads this token and allows Stop.",
     ]

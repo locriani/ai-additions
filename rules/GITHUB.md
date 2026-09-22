@@ -38,15 +38,16 @@ Use the high-level `gh` subcommands for every GitHub interaction:
 | Repo metadata, releases, workflows | `gh repo view`, `gh release ...`, `gh workflow ...` |
 | Native sub-issues + blocked-by dependencies | at create: `gh-issue new … --parent N --blocked-by N,M --blocking N`; after: `gh issue edit N --add-sub-issue M` / `--add-blocked-by M` / `--add-blocking M`; read: `gh issue view N --json parent,subIssues,blockedBy,blocking` |
 
-Relationships are native `gh` flags since gh 2.101 and take issue numbers. `gh-issue` reads a repo's templates with `gh api` internally — tool plumbing, not a Claude call, so it is not an escape-hatch case.
+Relationships are native `gh` flags since gh 2.101 and take issue numbers. `gh-issue` reads a repo's templates with `gh api …/contents/…`, an endpoint no subcommand covers.
 
 **Forbidden surfaces:**
 
 - `curl`, `wget`, `httpie`, or any HTTP client targeting `api.github.com`. These bypass auth, rate limits, and the structured surface.
-- `gh api`. Even though it's still authenticated, it sidesteps the high-level subcommands. Use `gh issue` / `gh pr` / `gh repo` / etc. — including the native relationship flags on `gh issue create` / `gh issue edit`.
+- `gh api` for anything a `gh` subcommand covers — issues, PRs, runs, workflows, secrets, variables, releases, labels, forks, repo metadata, search, gists; the table is `COVERED` in [`hooks/gh_api_coverage.py`](../plugins/github-utilities/hooks/gh_api_coverage.py). Where no subcommand exists — GraphQL, repo contents, rulesets, milestones, Projects — `gh api` **is** the surface and needs no token.
+- `gh api` writes of issue text — `POST …/issues`, a title or body `PATCH`, comments, and the GraphQL `createIssue` / `updateIssue` / `addComment` / `updateIssueComment` mutations. The PreToolUse guard denies them: issue text goes through `gh-issue new`, `gh issue comment`, or `gh issue edit`, which it checks.
 - WebFetch / web-fetch MCP tools targeting `github.com` URLs when the goal is reading repo state, issues, PRs, releases, or workflow runs. `gh` covers all of these structurally.
 
-**Escape hatch.** When `gh`'s high-level surface genuinely doesn't cover the action (rare GraphQL queries, brand-new beta endpoints, third-party integrations), end your turn's final response with a line beginning:
+**Escape hatch.** When an endpoint is on the covered list but its subcommand genuinely can't make this particular call, end your turn's final response with a line beginning:
 
 ```
 WEB-API-FALLBACK-JUSTIFIED: <one-sentence reason gh's high-level surface didn't cover this>
