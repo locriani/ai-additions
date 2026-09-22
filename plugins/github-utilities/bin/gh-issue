@@ -1,0 +1,201 @@
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["pyyaml>=6"]
+# ///
+"""gh-issue — file a GitHub issue from the repo's own template, with native relationships, or refuse.
+
+  gh-issue templates [-R owner/name]
+  gh-issue new [-R owner/name] --template KEY --title T --field id=value [--field id=@file ...]
+               [--parent N] [--blocked-by N,M] [--blocking N] [--label L ...] [--dry-run]
+  gh-issue check [-R owner/name] --kind create|edit|comment [--title T] [--body-file F|-]
+
+The rules live in `lib/issue_rules.py`: no issue cited in prose, and the body is a filled template
+whose field types set the caps. `new` renders the body exactly as GitHub's web form does, checks it,
+and only then runs `gh issue create`. `check` is what the PreToolUse hook runs on a raw `gh issue`.
+
+Templates are read with `gh api` from `.github/ISSUE_TEMPLATE/` in the target repo: `gh`'s high-level
+subcommands have no way to read a file, and this is the tool's own plumbing, not a Claude call.
+
+Exit codes: 0 ok, 1 the text breaks a rule or `gh` refused the write, 2 usage or the templates could
+not be read. A check that could not run is never a pass.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import shlex
+import subprocess
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "lib"))
+
+import issue_rules as rules  # noqa: E402
+
+TEMPLATE_DIR = ".github/ISSUE_TEMPLATE"
+
+
+class Refused(Exception):
+    """A usage or lookup failure: exit 2 with this message."""
+
+
+def run_gh(args: list[str], cwd: str | None = None) -> tuple[int, str, str]:
+    p = subprocess.run(["gh", *args], capture_output=True, text=True, cwd=cwd)
+    return p.returncode, p.stdout, p.stderr
+
+
+def resolve_repo(repo: str | None, gh) -> str:
+    if repo:
+        return repo
+    rc, out, err = gh(["repo", "view", "--json", "nameWithOwner", "-q", ".nameWithOwner"])
+    if rc != 0 or not out.strip():
+        raise Refused(f"no repo: pass -R owner/name ({err.strip() or 'not in a GitHub checkout'})")
+    return out.strip()
+
+
+def load_templates(repo: str, gh) -> list[rules.Template]:
+    rc, out, err = gh(["api", f"repos/{repo}/contents/{TEMPLATE_DIR}"])
+    if rc != 0:
+        raise Refused(f"{repo} has no issue templates at {TEMPLATE_DIR} ({err.strip()})")
+    templates = []
+    for entry in json.loads(out):
+        name = entry.get("name", "")
+        if entry.get("type") != "file" or name.startswith("config.") or not name.endswith((".yml", ".yaml")):
+            continue
+        rc, text, err = gh(["api", "-H", "Accept: application/vnd.github.raw", f"repos/{repo}/contents/{entry['path']}"])
+        if rc != 0:
+            raise Refused(f"could not read {entry['path']} ({err.strip()})")
+        templates.append(rules.parse_template(name, text))
+    if not templates:
+        raise Refused(f"{repo} has no issue templates at {TEMPLATE_DIR}")
+    return templates
+
+
+def pick(templates: list[rules.Template], key: str) -> rules.Template:
+    for t in templates:
+        if key.lower() in (t.key.lower(), t.name.lower()):
+            return t
+    names = ", ".join(f"{t.key} ({t.name})" for t in templates)
+    raise Refused(f"no template {key!r}; this repo has: {names}")
+
+
+def read_value(value: str) -> str:
+    if value.startswith("@"):
+        path = value[1:]
+        return sys.stdin.read() if path == "-" else Path(path).read_text()
+    return value
+
+
+def field_values(template: rules.Template, pairs: list[str]) -> dict[str, str]:
+    ids = [f.id for f in template.fields]
+    values = {}
+    for pair in pairs:
+        key, sep, value = pair.partition("=")
+        if not sep:
+            raise Refused(f"--field takes id=value, got {pair!r}")
+        if key not in ids:
+            raise Refused(f"{template.name} has no field {key!r}; its fields are: {', '.join(ids)}")
+        values[key] = read_value(value)
+    return values
+
+
+def report(problems: list[str], err) -> int:
+    for p in problems:
+        print(f"refused: {p}", file=err)
+    return 1 if problems else 0
+
+
+# --- subcommands -----------------------------------------------------------------------------
+
+
+def cmd_templates(a, gh, out, err) -> int:
+    for t in load_templates(resolve_repo(a.repo, gh), gh):
+        print(f"{t.key} ({t.name}) labels: {', '.join(t.labels) or '-'}", file=out)
+        for f in t.fields:
+            print(f"  {f.id}  {f.kind}  {'required' if f.required else 'optional'}  {rules.cap(f)}", file=out)
+    return 0
+
+
+def cmd_new(a, gh, out, err) -> int:
+    repo = resolve_repo(a.repo, gh)
+    template = pick(load_templates(repo, gh), a.template)
+    body = rules.render(template, field_values(template, a.field))
+    problems = rules.check_title(a.title) + rules.check_body(body, [template])
+    if problems:
+        return report(problems, err)
+    argv = ["issue", "create", "-R", repo, "--title", a.title.strip(), "--body", body]
+    for label in [*template.labels, *a.label]:
+        argv += ["--label", label]
+    for flag, value in (("--parent", a.parent), ("--blocked-by", a.blocked_by), ("--blocking", a.blocking)):
+        if value:
+            argv += [flag, value]
+    if a.dry_run:
+        print(f"would create in {repo}: {a.title.strip()}\n\n{body}\n", file=out)
+        print("gh " + shlex.join("<body above>" if x == body else x for x in argv), file=out)
+        return 0
+    rc, stdout, stderr = gh(argv)
+    if rc != 0:
+        print(f"create failed: {stderr.strip()}", file=err)
+        return 1
+    print(stdout.strip(), file=out)
+    return 0
+
+
+def cmd_check(a, gh, out, err) -> int:
+    body = None
+    if a.body_file:
+        body = sys.stdin.read() if a.body_file == "-" else Path(a.body_file).read_text()
+    problems = rules.check_title(a.title) if a.title is not None else []
+    if body is not None:
+        if a.kind == "comment":
+            problems += rules.check_comment(body)
+        else:
+            problems += rules.check_body(body, load_templates(resolve_repo(a.repo, gh), gh))
+    elif a.kind == "create":
+        problems.append("create needs a body: file with gh-issue new")
+    return report(problems, err)
+
+
+def parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(prog="gh-issue", description=__doc__.split("\n\n")[0])
+    sub = p.add_subparsers(dest="cmd", required=True)
+
+    t = sub.add_parser("templates", help="list the repo's templates, fields and caps")
+    t.add_argument("-R", "--repo")
+
+    n = sub.add_parser("new", help="file an issue from a template")
+    n.add_argument("-R", "--repo")
+    n.add_argument("--template", required=True)
+    n.add_argument("--title", required=True)
+    n.add_argument("--field", action="append", default=[], metavar="ID=VALUE|ID=@FILE")
+    n.add_argument("--parent", metavar="N")
+    n.add_argument("--blocked-by", metavar="N[,M]")
+    n.add_argument("--blocking", metavar="N[,M]")
+    n.add_argument("--label", action="append", default=[])
+    n.add_argument("--dry-run", action="store_true")
+
+    c = sub.add_parser("check", help="check issue text without writing")
+    c.add_argument("-R", "--repo")
+    c.add_argument("--kind", choices=("create", "edit", "comment"), required=True)
+    c.add_argument("--title")
+    c.add_argument("--body-file")
+    return p
+
+
+def main(argv=None, gh=run_gh, out=sys.stdout, err=sys.stderr) -> int:
+    a = parser().parse_args(argv)
+    command = {"templates": cmd_templates, "new": cmd_new, "check": cmd_check}[a.cmd]
+    try:
+        return command(a, gh, out, err)
+    except Refused as e:
+        print(f"gh-issue: {e}", file=err)
+        return 2
+    except OSError as e:
+        print(f"gh-issue: {e}", file=err)
+        return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())
