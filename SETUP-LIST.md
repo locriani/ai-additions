@@ -52,7 +52,7 @@ Every other row is still keep-to-side.
 | Item | Approved | Wording | Enabled |
 |---|---|---|---|
 | `worktree-guard` | 2026-09-13 | "as well as ... worktree-guard" | No |
-| `github-utilities` | 2026-09-13 | "oh add github utilities" | No |
+| `github-utilities` | 2026-09-13 | "oh add github utilities" | **Yes** — 2026-09-22 15:48 CT, on "github-utilities is approved for enabling after you modify it to allow gh api for features that are not in the CLI yet" (14:50 CT), then "CIMP" once 2.1.0 made that change: `claude plugin marketplace update ai-additions` + `claude plugin install github-utilities@ai-additions` (user scope, **2.1.0**). 2.0.0 added `gh-issue` (files from the repo's templates with native relationships), the PreToolUse guard and retired `gh-issue-rel`; 2.1.0 lets `gh api` through wherever no `gh` subcommand covers the endpoint and denies `gh api` writes of issue text. 86 units green on main at 9436a62. |
 | `datetime-inject` | 2026-09-13 | "pending list so far is approved" | **Yes** — 2026-09-16, "datetime-inject logic-rendering are approved for enabling": `claude plugin install datetime-inject@ai-additions` (user scope, 1.0.0) |
 | `logic-rendering` | 2026-09-13 | "pending list so far is approved" | **Yes** — 2026-09-16, "datetime-inject logic-rendering are approved for enabling": `claude plugin install logic-rendering@ai-additions` (user scope, 1.0.0) |
 | `skill-perf` | 2026-09-13 | "pending list so far is approved" | No |

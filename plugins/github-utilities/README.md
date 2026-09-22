@@ -34,7 +34,7 @@ uv run --quiet --with pyyaml python -m unittest discover -s plugins/github-utili
 
 ## Status
 
-**Not enabled.** Registered in this marketplace, installed nowhere.
+**Enabled** — 2026-09-22, 2.1.0, user scope. See the `github-utilities` row in `SETUP-LIST.md` for the approval wording.
 
 Installing is the whole install. Both hooks are wired by `hooks/hooks.json`, and `bin/gh-issue` sits at the default `bin/` location, which Claude Code adds to the Bash tool's `PATH` while the plugin is enabled.
 
