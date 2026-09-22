@@ -15,7 +15,7 @@ Nothing here is installed or enabled by being listed. See
 | [`asking-protocol`](asking-protocol.md) | [`locriani/asking-protocol`](https://github.com/locriani/asking-protocol) | Plugin (private repo) — MCP to stay disabled | 2026-09-13 |
 | [`reference-points`](reference-points.md) | [`locriani/reference-points`](https://github.com/locriani/reference-points) | Plugin (public repo) | 2026-09-13 |
 | [`claude-statusline`](claude-statusline.md) | [`locriani/claude-statusline`](https://github.com/locriani/claude-statusline) | Rust binaries + LaunchAgent | 2026-09-13 |
-| [`atuin`](atuin.md) | [`atuinsh/atuin`](https://github.com/atuinsh/atuin) | Homebrew CLI | 2026-09-13 |
+| [`atuin`](atuin.md) | [`atuinsh/atuin`](https://github.com/atuinsh/atuin), installed via `Standard Configs/machine/atuin/` | Homebrew CLI + `~/.zshrc` init line | 2026-09-13 |
 | [`upstream-plugins`](upstream-plugins.md) | `claude-plugins-official` | `security-guidance`, `superpowers` | 2026-09-13 |
 | [`mattpocock-skills`](mattpocock-skills.md) | [`mattpocock/skills`](https://github.com/mattpocock/skills) | Skills — `to-spec`, `to-tickets` | 2026-09-15 |
 | [`chief-of-stuff`](chief-of-stuff.md) | [`locriani/chief-of-stuff`](https://github.com/locriani/chief-of-stuff) | Plugin (private repo) — one main-session agent | 2026-09-16 |
