@@ -25,17 +25,13 @@ that is the difference between usable and not.
 
 ## The blocker
 
-Publishing writes blocking edges as prose. [`rules/GITHUB.md`](../rules/GITHUB.md)
-forbids it — sub-issues and blocked-by dependencies exist only on REST, route
-through `gh-issue-rel`, and §"Trust the relationships" specifically condemns
-restating a relationship in the body because it rots as the issues move.
+Publishing writes blocking edges as prose. [`rules/GITHUB.md`](../rules/GITHUB.md) forbids it — sub-issues and blocked-by dependencies are native `gh issue` relationship flags, and §"Trust the relationships" specifically condemns restating a relationship in the body because it rots as the issues move.
 
 ```
 computes(graph)  ∧  ¬publishes(graph, native)
 ```
 
-Only the last step is wrong. Adopting this means replacing its publish step with
-[`plugins/github-utilities/bin/gh-issue-rel`](../plugins/github-utilities/bin/gh-issue-rel).
+Only the last step is wrong. Adopting this means replacing its publish step with `gh`'s native relationship flags, per [`rules/GITHUB.md`](../rules/GITHUB.md).
 
 Second cost: `to-spec` depends on triage-label vocabulary established by a
 `setup-matt-pocock-skills` step, and the repo ships Matt-specific siblings

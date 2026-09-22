@@ -21,10 +21,7 @@ the cheapest thing to take.
 
 ## The blocker
 
-Same as the others, and here it is the whole skill: relationships are written
-with `gh issue create` and prose — "blocked by #12", "parent: #4" — which
-[`rules/GITHUB.md`](../rules/GITHUB.md) forbids in favour of native links
-through `gh-issue-rel`.
+Same as the others, and here it is the whole skill: relationships are written with `gh issue create` and prose — "blocked by #12", "parent: #4" — which [`rules/GITHUB.md`](../rules/GITHUB.md) forbids in favour of native links through `gh`'s relationship flags.
 
 It also assumes the PRD is already a GitHub issue, so it cannot read a
 `docs/prd/<slug>.md` file — which is the default destination

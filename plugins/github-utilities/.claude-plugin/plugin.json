@@ -1,7 +1,7 @@
 {
   "name": "github-utilities",
-  "description": "Enforces the gh-CLI mandate in GITHUB.md: a Stop hook that blocks turn-end when a GitHub web-API call slipped past gh (curl/wget against api.github.com, `gh api`, WebFetch of github.com), plus gh-issue-rel — the sanctioned wrapper for native sub-issues and blocked-by dependencies, the one gap gh's high-level subcommands leave.",
-  "version": "1.0.0",
+  "description": "Enforces GITHUB.md: gh-issue files issues from the repo's own templates with native relationships; a PreToolUse guard holds raw gh issue writes to the same rules (no issue cited in prose, template-shaped bodies); a Stop hook blocks turn-end on GitHub web-API calls gh could have covered.",
+  "version": "2.0.0",
   "author": {
     "name": "Zach Gardner",
     "email": "locriani@gmail.com"

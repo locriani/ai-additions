@@ -115,11 +115,7 @@ Every other row is still keep-to-side.
   database created and `schema.sql` deployed to `~/.claude/skill-perf/`;
   `stack-profiles` needs its profiles deployed to `~/.claude/stacks/`. Each plugin
   README says so.
-- **The CLIs are not a third case.** `github-utilities` and `repo-scaffold` each
-  keep their executable at the default `bin/` location, which Claude Code adds to
-  the Bash tool's `PATH` while the plugin is enabled — bare `gh-issue-rel` and
-  `scaffold-repo` resolve on install, with nothing to link. This file previously
-  asserted the opposite; it was wrong, and so were both READMEs.
+- **The CLIs are not a third case.** `github-utilities` and `repo-scaffold` each keep their executable at the default `bin/` location, which Claude Code adds to the Bash tool's `PATH` while the plugin is enabled — bare `gh-issue` and `scaffold-repo` resolve on install, with nothing to link. This file previously asserted the opposite; it was wrong, and so were both READMEs.
 - **`repo-scaffold` does not run as a plugin.** Its `bin/` shim execs
   `~/.local/share/repo-scaffold/scaffold-new-repo.sh` and its slash command names
   `~/.local/bin/scaffold-repo` — both Standard Configs deploy paths that `apply.py`
@@ -132,7 +128,7 @@ Every other row is still keep-to-side.
   `external/claude-plugins/templates/plugin-set.txt`. Deduplicate before either
   is enabled.
 - **The tracer-bullet fold-in is an acceptance criterion, not a preference.** Whichever issue-tracking candidate is eventually chosen must state the vertical-slice rule explicitly in its decomposition step — a slice cuts every layer, a layer is not a slice. `prd-design` already does. Written down because "fold it in" is otherwise lost by the time the pick is made.
-- **All three issue-tracking candidates share one blocker:** they publish blocking edges as prose, which `rules/GITHUB.md` forbids in favour of native links via `gh-issue-rel`. Adopting any of them means replacing its publish step. `mattpocock-skills` is closest — it computes the dependency graph correctly and only lands it wrong.
+- **All three issue-tracking candidates share one blocker:** they publish blocking edges as prose, which `rules/GITHUB.md` forbids in favour of native links via `gh`'s relationship flags. Adopting any of them means replacing its publish step. `mattpocock-skills` is closest — it computes the dependency graph correctly and only lands it wrong.
 - **Two items look misfiled and are recorded where they were approved, not where
   they may belong.** `atuin` is a Homebrew CLI with no Claude surface at all;
   `claude-statusline` is Rust plus two binaries plus a LaunchAgent. Both read as

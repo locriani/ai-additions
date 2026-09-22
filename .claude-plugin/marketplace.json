@@ -28,8 +28,8 @@
     },
     {
       "name": "github-utilities",
-      "description": "Stop hook enforcing the gh-CLI mandate, plus gh-issue-rel for native sub-issues and dependencies.",
-      "version": "1.0.0",
+      "description": "gh-issue files from templates with native relationships; a PreToolUse guard and a Stop hook enforce GITHUB.md.",
+      "version": "2.0.0",
       "source": "./plugins/github-utilities",
       "author": {
         "name": "Zach Gardner",

@@ -118,16 +118,12 @@ Publishing to GitHub is supported but is not the default, and when it is used th
 structure carries the relationships — never prose:
 
 ```sh
-gh issue create --template prd.yml          # .github/ISSUE_TEMPLATE/prd.yml, YAML form schema
-gh-issue-rel sub-add <prd#> <slice#>        # slices are NATIVE sub-issues
-gh-issue-rel block-add <slice#> <blocker#>  # dependencies are NATIVE, not "blocked by #12"
+gh-issue new --template prd --title T --field id=value         # .github/ISSUE_TEMPLATE/prd.yml, YAML form schema
+gh-issue new --template slice … --parent <prd#>                # slices are NATIVE sub-issues
+gh issue edit <slice#> --add-blocked-by <blocker#>             # dependencies are NATIVE, not "blocked by #12"
 ```
 
-`gh-issue-rel` is mandatory for both. Sub-issue and blocked-by links exist only
-on REST, the add endpoints take the issue's **database id** rather than its
-number, and a hand-rolled call silently targets the wrong issue. Writing
-"blocked by #12" in the body instead creates a second source of truth that rots
-as the issues move.
+Native links are mandatory for both. Writing "blocked by #12" in the body instead creates a second source of truth that rots as the issues move, and `github-utilities` refuses it.
 
 ## Red flags — the inference that fails
 

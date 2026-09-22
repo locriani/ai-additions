@@ -24,13 +24,8 @@ implied.
 
 Two, and the second is the larger.
 
-1. **Prose blocking edges, GitHub only.** Same violation of
-   [`rules/GITHUB.md`](../rules/GITHUB.md) as every candidate: dependencies are
-   written into the body rather than through `gh-issue-rel`. And there is no
-   local-tracker path at all, so a repo with no remote gets nothing.
-2. **It is command-shaped, not skill-shaped.** `/do`, `/review`, `/merge`, `/pr`
-   carry an entire opinionated workflow that overlaps `rules/GITHUB.md` on
-   branches, PR templates, and closing keywords — without agreeing with it.
+1. **Prose blocking edges, GitHub only.** Same violation of [`rules/GITHUB.md`](../rules/GITHUB.md) as every candidate: dependencies are written into the body rather than through `gh`'s native relationship flags. And there is no local-tracker path at all, so a repo with no remote gets nothing.
+2. **It is command-shaped, not skill-shaped.** `/do`, `/review`, `/merge`, `/pr` carry an entire opinionated workflow that overlaps `rules/GITHUB.md` on branches, PR templates, and closing keywords — without agreeing with it.
 
 ```
 install(yoke) ≡ adopt(workflow)     ≠  add(skill)
