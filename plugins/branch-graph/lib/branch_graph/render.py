@@ -14,20 +14,26 @@ def summary(bd: BranchDiff, verdicts: dict[str, str]) -> str:
     return f"nodes +{len(bd.added)} −{len(bd.removed)} ~{len(bd.changed)} edges +{len(bd.edges_added)} −{len(bd.edges_removed)} drift={drift}"
 
 
+def touched(bd: BranchDiff) -> set[ModuleId]:
+    out = bd.added | bd.removed | set(bd.changed)
+    for e in bd.edges_added + bd.edges_removed:
+        out |= {e.src, e.dst}
+    return out
+
+
 def drawn(bd: BranchDiff) -> tuple[list[ModuleId], int]:
     """The touched nodes plus everything one hop from them; the count of the rest."""
-    touched = bd.added | bd.removed | set(bd.changed)
-    for e in bd.edges_added + bd.edges_removed:
-        touched |= {e.src, e.dst}
+    touched_ = touched(bd)
     edges = list(bd.base.edges) + list(bd.head.edges)
-    near = {b for a, b in edges if a in touched} | {a for a, b in edges if b in touched}
+    near = {b for a, b in edges if a in touched_} | {a for a, b in edges if b in touched_}
     everything = bd.base.nodes | bd.head.nodes
-    shown = sorted((touched | near) & everything)
+    shown = sorted((touched_ | near) & everything)
     return shown, len(everything) - len(shown)
 
 
 def mermaid(bd: BranchDiff, verdicts: dict[str, str]) -> str:
     shown, rest = drawn(bd)
+    hot = touched(bd)
     ids = {m: f"n{i}" for i, m in enumerate(shown)}
     lines = ["flowchart LR"]
     for m, nid in ids.items():
@@ -39,7 +45,7 @@ def mermaid(bd: BranchDiff, verdicts: dict[str, str]) -> str:
     links, red = 0, []
     new = {(e.src, e.dst): e for e in bd.edges_added}
     for (src, dst), e in sorted(bd.head.edges.items()):
-        if src in ids and dst in ids:
+        if src in ids and dst in ids and (src in hot or dst in hot):
             lines.append(f"  {ids[src]} {'==>' if (src, dst) in new else '-->'} {ids[dst]}")
             if verdicts.get(e.key) == "drift":
                 red.append(links)
