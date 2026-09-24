@@ -1,7 +1,7 @@
 {
   "name": "extras",
   "description": "Personal skills bundle: code-review, time-estimation, defect-density, dev-velocity, and skill-perf-judge (the LLM-judge driver for the skill-perf ledger).",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "Zach Gardner",
     "email": "locriani@gmail.com"

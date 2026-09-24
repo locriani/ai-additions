@@ -51,7 +51,7 @@ Switch to persona-axis dispatch (per `CODE_REVIEW.md`) when ANY of:
 - **Network-facing or security-sensitive code** — needs adversarial coverage.
 - **User explicitly requests** a thorough / deep / multi-perspective review (but not a named panel — that's §4).
 
-**Personas are the axes.** Select relevant personas from the catalog (personas 1–15 — Steve Jobs excluded from this mode). Always include:
+**Personas are the axes.** Select relevant personas from the catalog (personas 1–21 — Steve Jobs (22) excluded from this mode). Always include:
 
 - **Architect (1)** + **Staff Eng (2)** — always present.
 
@@ -65,8 +65,8 @@ Then add by change type:
 | Any repo with declared architecture | {Arch} Expert (11) | — |
 | Concurrent code | Concurrency Expert (13) | — |
 | Database / schema | Database Expert (15) | — |
-| Distributed / networked state | Distributed Systems Expert (14), Database Expert (15) | — |
-| Migration under concurrent writes | Database Expert (15), Chaos Demon (5) | Distributed Systems (14) |
+| Distributed / networked state | Kyle Kingsbury (14), Database Expert (15) | — |
+| Migration under concurrent writes | Database Expert (15), Chaos Demon (5) | Kyle Kingsbury (14) |
 | Network / security-sensitive | Chaos Demon (5), Devil's Advocate (4) | — |
 | Observability concern | Data Analytics (3) | — |
 
@@ -76,7 +76,7 @@ Then add by change type:
 - If undeclared, infer from dominant code patterns and state your inference in the agent's prompt.
 
 When escalating, follow `CODE_REVIEW.md` for:
-1. **Persona catalog** — full definitions, primary lenses, persona-specific checks.
+1. **Persona catalog** — primary lenses and dispatch rules; each persona's full definition and numbered checks live in its own file, `personas/NN-name.md`. Give each agent only its own file.
 2. **Prompt-writing rules** — each agent's prompt MUST include explicit scope, absolute file paths, spec restated, numbered checks, skepticism demanded, severity-tagged output, word-count cap.
 3. **Dispatch** — all persona-agents in ONE message (one tool-call block, multiple `Agent` tool uses). Sequential dispatch defeats the wall-clock-saving purpose.
 4. **Aggregate findings, triage, fix, summarize.** See "Aggregation" below.
@@ -91,7 +91,7 @@ When the user explicitly requests a named panel, or auto-suggestion criteria app
 | 9-persona | "9-persona review", "9-axis review", "review with docs" | Diff touches any user-visible surface, public API contract, or doc file |
 | Brutal panel | "brutal review", "full panel", "nuclear option", "brutal panel" | Never auto — user-triggered only |
 
-Named panels dispatch all assigned personas in ONE message. Full persona definitions, checks, and panel compositions in `CODE_REVIEW.md`.
+Named panels dispatch all assigned personas in ONE message. Panel compositions in `CODE_REVIEW.md`; persona definitions and checks in `personas/`.
 
 Note: "12-persona review" is a legacy alias for the brutal panel — use "brutal panel" / "brutal review" as the canonical terms.
 
@@ -192,4 +192,4 @@ The trivial-change escape hatch (§1 above) is the ONLY case inline review is al
 - **Build before reviewing.** Never dispatch reviewers against a change that doesn't compile.
 - **Self-contained prompts.** Each agent gets the full diff/context it needs.
 
-For the persona catalog, prompt-craft details, and named-panel compositions, see `CODE_REVIEW.md` next to this file.
+For the persona catalog, prompt-craft details, and named-panel compositions, see `CODE_REVIEW.md` next to this file; per-persona lenses and checks are in `personas/` next to it.

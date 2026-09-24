@@ -56,7 +56,7 @@ Every other row is still keep-to-side.
 | `datetime-inject` | 2026-09-13 | "pending list so far is approved" | **Yes** — 2026-09-16, "datetime-inject logic-rendering are approved for enabling": `claude plugin install datetime-inject@ai-additions` (user scope, 1.0.0) |
 | `logic-rendering` | 2026-09-13 | "pending list so far is approved" | **Yes** — 2026-09-16, "datetime-inject logic-rendering are approved for enabling": `claude plugin install logic-rendering@ai-additions` (user scope, 1.0.0) |
 | `skill-perf` | 2026-09-13 | "pending list so far is approved" | No |
-| `extras` | 2026-09-13 | "pending list so far is approved" | No |
+| `extras` | 2026-09-13 | "pending list so far is approved"; 2026-09-24 code-review personas — "Thomas Ptacek - add. Joshua Bloch - add. Kent Beck - add. Brendan Greg - perfect. Leslie Lamport - yes. Leonie Watson - yes." (Zach) | **Yes** — 2026-09-24 15:24 CT, on "code review skill is approved for enablement" then "do it" after being told this enables all five skills: `claude plugin install extras@ai-additions --scope user` (1.1.0) |
 | `stack-profiles` | 2026-09-13 | "pending list so far is approved" | No |
 | `repo-scaffold` | 2026-09-13 | "pending list so far is approved" | No |
 | `prd-design` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
