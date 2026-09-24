@@ -7,6 +7,16 @@
   },
   "plugins": [
     {
+      "name": "branch-graph",
+      "description": "A branch's diff as a before/after module import diagram, linked to its hunks, with import-rule drift.",
+      "version": "0.1.0",
+      "source": "./plugins/branch-graph",
+      "author": {
+        "name": "Zach Gardner",
+        "email": "locriani@gmail.com"
+      }
+    },
+    {
       "name": "datetime-inject",
       "description": "UserPromptSubmit hook injecting per-turn local date and time.",
       "version": "1.0.0",

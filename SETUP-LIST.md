@@ -61,6 +61,7 @@ Every other row is still keep-to-side.
 | `repo-scaffold` | 2026-09-13 | "pending list so far is approved" | No |
 | `prd-design` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
 | `mermaid-system-design` | 2026-09-15 | "add / register in ai-additions" | **Yes** — installed from the local marketplace |
+| `branch-graph` | 2026-09-23 | "branch-graph is approved for addition and enabling" (Zach, 18:42) | **Yes** — enabled by the same phrase; installed from the local marketplace once merged |
 
 ### Rules — `rules/`, copied verbatim, deployed nowhere
 
