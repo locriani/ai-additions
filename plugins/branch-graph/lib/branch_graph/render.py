@@ -31,8 +31,7 @@ def drawn(bd: BranchDiff) -> tuple[list[ModuleId], int]:
     return shown, len(everything) - len(shown)
 
 
-def mermaid(bd: BranchDiff, verdicts: dict[str, str]) -> str:
-    shown, rest = drawn(bd)
+def mermaid(bd: BranchDiff, verdicts: dict[str, str], shown: list[ModuleId], rest: int) -> str:
     hot = touched(bd)
     ids = {m: f"n{i}" for i, m in enumerate(shown)}
     lines = ["flowchart LR"]
@@ -75,8 +74,8 @@ def _hunk_html(text: str) -> str:
     return "\n".join(out)
 
 
-def page(bd: BranchDiff, title: str, subtitle: str, mmd: str, verdicts: dict[str, str], notes: dict[str, str], hunks: dict[ModuleId, str]) -> str:
-    shown, rest = drawn(bd)
+def page(bd: BranchDiff, title: str, subtitle: str, mmd: str, verdicts: dict[str, str], notes: dict[str, str], hunks: dict[ModuleId, str],
+         shown: list[ModuleId], rest: int) -> str:
     ids = {m: f"n-{i}" for i, m in enumerate(shown)}
     rows = [(e, verdicts.get(e.key, "")) for e in bd.edges_added] + [(e, "removed") for e in bd.edges_removed]
     table = "\n".join(

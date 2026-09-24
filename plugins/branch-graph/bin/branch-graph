@@ -40,17 +40,17 @@ def main(argv: list[str] | None = None) -> int:
     notes = json.loads(args.notes.read_text()) if args.notes else {}
     verdicts = {e.key: verdict(e, rules) for e in bd.edges_added}
 
-    shown, _ = render.drawn(bd)
+    shown, rest = render.drawn(bd)
     files_of = {}
     for path, module in {**bd.base.files, **bd.head.files}.items():
         files_of.setdefault(module, []).append(path)
-    changed_files = set(source.numstat(base, args.head, args.root))
+    changed_files = set(bd.numstat)
     hunks = {m: source.hunks(base, args.head, sorted(set(files_of.get(m, [])) & changed_files)) for m in shown}
 
-    mmd = render.mermaid(bd, verdicts)
+    mmd = render.mermaid(bd, verdicts, shown, rest)
     title = f"{Path(source.repo).name} {source.short(args.head)} branch graph"
     subtitle = f"{source.short(base)} → {source.short(args.head)}  ·  root {args.root}  ·  depth {args.depth}"
-    args.out.write_text(render.page(bd, title, subtitle, mmd, verdicts, notes, hunks))
+    args.out.write_text(render.page(bd, title, subtitle, mmd, verdicts, notes, hunks, shown, rest))
     args.out.with_suffix(".mmd").write_text(mmd)
 
     print(render.summary(bd, verdicts))

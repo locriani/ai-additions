@@ -26,7 +26,7 @@ class DrawnTest(unittest.TestCase):
         shown, rest = render.drawn(bd)
         self.assertEqual(shown, [("c",), ("t",), ("x",), ("z",)])
         self.assertEqual(rest, 1)
-        mmd = render.mermaid(bd, {})
+        mmd = render.mermaid(bd, {}, shown, rest)
         self.assertEqual(mmd.count("-->") + mmd.count("==>"), 3)
 
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import fnmatch
 import re
+from operator import attrgetter
 from dataclasses import dataclass, field
 
 ModuleId = tuple[str, ...]
@@ -56,6 +57,7 @@ class BranchDiff:
     changed: dict[ModuleId, tuple[int, int]]
     edges_added: list[Edge]
     edges_removed: list[Edge]
+    numstat: dict[str, tuple[int, int]]
 
 
 def diff(base: Graph, head: Graph, numstat: dict[str, tuple[int, int]]) -> BranchDiff:
@@ -67,7 +69,7 @@ def diff(base: Graph, head: Graph, numstat: dict[str, tuple[int, int]]) -> Branc
         if module in both and (plus or minus):
             p, m = changed.get(module, (0, 0))
             changed[module] = (p + plus, m + minus)
-    order = lambda e: (e.file, e.line)  # noqa: E731
+    order = attrgetter("file", "line")
     return BranchDiff(
         base=base,
         head=head,
@@ -76,6 +78,7 @@ def diff(base: Graph, head: Graph, numstat: dict[str, tuple[int, int]]) -> Branc
         changed=changed,
         edges_added=sorted((e for k, e in head.edges.items() if k not in base.edges), key=order),
         edges_removed=sorted((e for k, e in base.edges.items() if k not in head.edges), key=order),
+        numstat=numstat,
     )
 
 
