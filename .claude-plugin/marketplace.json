@@ -9,7 +9,7 @@
     {
       "name": "branch-graph",
       "description": "A branch's diff as a before/after module import diagram, linked to its hunks, with import-rule drift.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "source": "./plugins/branch-graph",
       "author": {
         "name": "Zach Gardner",
