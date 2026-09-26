@@ -98,6 +98,24 @@ class CliTest(unittest.TestCase):
             self.assertIn(f'id="{link["href"]}"', page)
             self.assertIn(" -> ", link["title"])
 
+    def test_colors_override_the_page_and_the_diagram_follows(self):
+        colors = Path(self.tmp.name, "colors.json")
+        colors.write_text('{"light": {"add": "#00aa55"}, "dark": {"bg": "#000000"}}')
+        self.run_cli("--colors", str(colors))
+        page = self.out.read_text()
+        self.assertIn("--add: #00aa55;", page)
+        self.assertIn("--bg: #000000;", page)
+        self.assertIn(".node.added rect {{ fill: var(--add-bg); stroke: var(--add); }}".replace("{{", "{").replace("}}", "}"), page)
+        self.assertNotRegex(self.out.with_suffix(".mmd").read_text(), r"#[0-9a-f]{3,6}\b|var\(")
+
+    def test_bad_colors_file_is_a_usage_error(self):
+        colors = Path(self.tmp.name, "colors.json")
+        colors.write_text('{"light": {"grene": "#0f0"}}')
+        argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "base", "--root", ".", "--out", str(self.out), "--colors", str(colors)]
+        run = subprocess.run(argv, capture_output=True, text=True)
+        self.assertEqual(run.returncode, 2)
+        self.assertIn("unknown token 'grene'", run.stderr)
+
     def test_rules_and_notes(self):
         rules = Path(self.tmp.name, "ARCH.md")
         rules.write_text("```import-rules\nc -> b\n```\n")
@@ -106,7 +124,9 @@ class CliTest(unittest.TestCase):
         lines = self.run_cli("--rules", str(rules), "--notes", str(notes)).splitlines()
         self.assertEqual(lines[0], "nodes +1 −0 ~1 edges +2 −0 drift=1")
         self.assertIn("c -> a  c.py:2  drift", lines)
-        self.assertIn("c reads a&#x27;s settings", self.out.read_text())
+        page = self.out.read_text()
+        self.assertIn("c reads a&#x27;s settings", page)
+        self.assertRegex(page, r"#graph svg #L_n\d+_n\d+_\d+ \{ stroke: var\(--drift\) !important; \}")
 
 
 class PhpCliTest(unittest.TestCase):

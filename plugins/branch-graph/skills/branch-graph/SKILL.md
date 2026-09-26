@@ -24,6 +24,8 @@ The tool is `bin/branch-graph` two levels above this skill's base directory. Lan
    - Swift: a file belongs to its target (the directory under `Sources/` or `Tests/`, else the first directory under `--root`), and `import` lines name targets; system frameworks are dropped. `Package.swift` is not a module.
    - `--rules ARCHITECTURE.md` reads the first ```` ```import-rules ```` fence (one `A -> B` glob pair per line). With no fence, every verdict is `no rules`. Never write rules into a file to get a verdict.
 
+   - `--colors colors.json` overrides the palette, for the page and the diagram alike: `{"light": {"add": "#1f8a4c"}, "dark": {"bg": "#000000"}}`. The tokens are `bg surface ink muted rule edge accent accent-bg add add-bg del del-bg drift drift-bg hdr`; an unknown token, or a value holding `;`, `:`, braces, quotes or angle brackets, is a usage error.
+
    Stdout is one summary line (`nodes +a −r ~c edges +e −x drift=d`), then one line per new edge with the `file:line` that created it.
 
 2. **Write the notes.** For each new edge, one line on why it exists, read from the code at that `file:line`, into a JSON file: `{"app.web -> app.rag": "the chat route streams retrieved passages"}`.

@@ -13,7 +13,37 @@ MERMAID_CDN = "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"
 # ponytail: one fixed budget. Mermaid refuses more than 500 edges, and well before that a picture stops being readable:
 # the OpenEMR fork at `--root .` wanted 561 (17 between touched modules, 544 out to context). Upgrade path: a flag.
 EDGE_BUDGET = 150
+# Every color on the page and in the diagram. `--colors` lays {"light": {token: value}, "dark": {...}} over these.
+PALETTE = {
+    "light": {"bg": "#f5f6f8", "surface": "#ffffff", "ink": "#1b2230", "muted": "#5e6878", "rule": "#d9dde4", "edge": "#6b7483",
+              "accent": "#2f5bd3", "accent-bg": "#e6ebf7", "add": "#1f8a4c", "add-bg": "#e3f4ea", "del": "#c23b3b", "del-bg": "#fbe8e8",
+              "drift": "#c2410c", "drift-bg": "#fdebdf", "hdr": "#6b56c4"},
+    "dark": {"bg": "#12151b", "surface": "#1a1f28", "ink": "#e4e8ef", "muted": "#98a2b3", "rule": "#2a313d", "edge": "#7d8799",
+             "accent": "#7aa2ff", "accent-bg": "#1c2742", "add": "#4cc27e", "add-bg": "#173323", "del": "#f07070", "del-bg": "#3a1a1c",
+             "drift": "#fb923c", "drift-bg": "#3a2414", "hdr": "#b4a5f5"},
+}
+# A value lands inside <style>: no `;`, `:`, braces, quotes or angle brackets, so it cannot end the rule or the element.
+COLOR_VALUE = re.compile(r"^[#\w(),.%/ -]+$")
 HUNK = re.compile(r"^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@")
+
+
+def palette(overrides: dict | None = None) -> dict[str, dict[str, str]]:
+    """PALETTE with `overrides` laid over it. Raises ValueError on an unknown mode or token, or a value that is not a plain CSS value."""
+    out = {mode: dict(tokens) for mode, tokens in PALETTE.items()}
+    for mode, tokens in (overrides or {}).items():
+        if mode not in out or not isinstance(tokens, dict):
+            raise ValueError(f"colors: {mode!r} is not a mode; use {{\"light\": {{...}}, \"dark\": {{...}}}}")
+        for token, value in tokens.items():
+            if token not in out[mode]:
+                raise ValueError(f"colors: unknown token {token!r}; known: {', '.join(out[mode])}")
+            if not isinstance(value, str) or not COLOR_VALUE.match(value):
+                raise ValueError(f"colors: {mode}.{token} = {value!r} is not a plain CSS color")
+            out[mode][token] = value
+    return out
+
+
+def _vars(tokens: dict[str, str]) -> str:
+    return " ".join(f"--{k}: {v};" for k, v in tokens.items())
 
 
 def summary(bd: BranchDiff, verdicts: dict[str, str]) -> str:
@@ -79,13 +109,14 @@ def mermaid(bd: BranchDiff, verdicts: dict[str, str], shown: list[ModuleId], res
     for i, nid in enumerate(ids.values()):
         lines.append(f'  click {nid} href "#n-{i}" _self')
     lines += [
-        "  classDef added fill:#d9f2e3,stroke:#1f8a4c,stroke-width:2px,color:#0d3a20",
-        "  classDef removed fill:#fbe4e4,stroke:#c23b3b,stroke-width:2px,stroke-dasharray:5 3,color:#4a1111",
-        "  classDef changed fill:#e6ebf7,stroke:#2f5bd3,stroke-width:2px,color:#14223f",
-        "  classDef more fill:none,stroke:none,color:#7a8494",
+        # Shape only: colors come from the page's palette, by class, so they follow --colors and dark mode.
+        "  classDef added stroke-width:2px",
+        "  classDef removed stroke-width:2px,stroke-dasharray:5 3",
+        "  classDef changed stroke-width:2px",
+        "  classDef more fill:none,stroke:none",
     ]
     if red:
-        lines.append(f"  linkStyle {','.join(map(str, red))} stroke:#d4481f,stroke-width:3px")
+        lines.append(f"  linkStyle {','.join(map(str, red))} stroke-width:3px")
     return "\n".join(lines) + "\n"
 
 
@@ -145,7 +176,7 @@ class Anchors:
 
 
 def page(bd: BranchDiff, title: str, subtitle: str, mmd: str, verdicts: dict[str, str], notes: dict[str, str], hunks: dict[ModuleId, str],
-         shown: list[ModuleId], rest: int) -> str:
+         shown: list[ModuleId], rest: int, colors: dict[str, dict[str, str]] | None = None) -> str:
     ids = {m: f"n-{i}" for i, m in enumerate(shown)}
     anchors = Anchors()
     diffs = {m: anchors.diff_html(hunks.get(m, ""), bd.numstat) for m in shown}
@@ -183,7 +214,10 @@ def page(bd: BranchDiff, title: str, subtitle: str, mmd: str, verdicts: dict[str
         + f'</summary>{connections(m)}{diffs[m] or NO_CHANGES}</details>'
         for m in shown
     )
-    data = {"links": [{"href": href(e, k), "title": f"{e.key}  {e.file}:{e.line}"} for e, k in links(bd, shown)]}
+    drawn_links = links(bd, shown)
+    data = {"links": [{"href": href(e, k), "title": f"{e.key}  {e.file}:{e.line}"} for e, k in drawn_links]}
+    nid = {m: f"n{i}" for i, m in enumerate(shown)}
+    drift = ", ".join(f"#graph svg #L_{nid[e.src]}_{nid[e.dst]}_{i}" for i, (e, k) in enumerate(drawn_links) if k == "new" and verdicts.get(e.key) == "drift")
     chips = [("added", f"+{len(bd.added)} modules"), ("removed", f"−{len(bd.removed)} modules"), ("changed", f"~{len(bd.changed)} changed"),
              ("context", f"+{len(bd.edges_added)} / −{len(bd.edges_removed)} edges"), ("drift", f"{sum(v == 'drift' for v in verdicts.values())} drift")]
     return TEMPLATE.format(
@@ -191,6 +225,8 @@ def page(bd: BranchDiff, title: str, subtitle: str, mmd: str, verdicts: dict[str
         chips="".join(f'<span class="pill {c}">{escape(t)}</span>' for c, t in chips),
         rest=f"{rest} untouched modules not drawn." if rest else "",
         data=json.dumps(data).replace("</", "<\\/"),
+        drift=f"{drift} {{ stroke: var(--drift) !important; }}" if drift else "",
+        light=_vars((colors or PALETTE)["light"]), dark=_vars((colors or PALETTE)["dark"]),
     )
 
 
@@ -200,18 +236,11 @@ TEMPLATE = """<meta charset="utf-8">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 :root {{
-  --bg: #f5f6f8; --surface: #ffffff; --ink: #1b2230; --muted: #5e6878; --rule: #d9dde4; --accent: #2f5bd3;
-  --add: #1f8a4c; --add-bg: #e3f4ea; --del: #c23b3b; --del-bg: #fbe8e8; --drift: #c2410c; --drift-bg: #fdebdf; --hdr: #6b56c4;
+  {light}
   --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }}
-@media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{
-  color-scheme: dark; --bg: #12151b; --surface: #1a1f28; --ink: #e4e8ef; --muted: #98a2b3; --rule: #2a313d; --accent: #7aa2ff;
-  --add: #4cc27e; --add-bg: #173323; --del: #f07070; --del-bg: #3a1a1c; --drift: #fb923c; --drift-bg: #3a2414; --hdr: #b4a5f5;
-}} }}
-:root[data-theme="dark"] {{
-  color-scheme: dark; --bg: #12151b; --surface: #1a1f28; --ink: #e4e8ef; --muted: #98a2b3; --rule: #2a313d; --accent: #7aa2ff;
-  --add: #4cc27e; --add-bg: #173323; --del: #f07070; --del-bg: #3a1a1c; --drift: #fb923c; --drift-bg: #3a2414; --hdr: #b4a5f5;
-}}
+@media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{ color-scheme: dark; {dark} }} }}
+:root[data-theme="dark"] {{ color-scheme: dark; {dark} }}
 body {{ background: var(--bg); color: var(--ink); font: 15px/1.55 var(--sans); }}
 main {{ max-width: 1100px; margin: 0 auto; padding: 28px 16px 64px; display: grid; gap: 28px; }}
 h1 {{ font-size: 1.5rem; font-weight: 600; margin: 0; text-wrap: balance; }}
@@ -228,6 +257,16 @@ header {{ display: grid; gap: 10px; }}
 .scroll {{ overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; }}
 #graph {{ padding: 16px; min-height: 120px; }}
 #graph svg {{ max-width: none; }}
+#graph svg .flowchart-link {{ stroke: var(--edge); }}
+#graph svg .marker {{ fill: var(--edge); stroke: var(--edge); }}
+#graph svg .node rect, #graph svg .node polygon {{ fill: var(--surface); stroke: var(--rule); }}
+#graph svg .node.added rect {{ fill: var(--add-bg); stroke: var(--add); }}
+#graph svg .node.removed rect {{ fill: var(--del-bg); stroke: var(--del); }}
+#graph svg .node.changed rect {{ fill: var(--accent-bg); stroke: var(--accent); }}
+#graph svg .node.more rect {{ fill: none; stroke: none; }}
+#graph svg .nodeLabel {{ color: var(--ink); }}
+#graph svg .node.more .nodeLabel {{ color: var(--muted); }}
+{drift}
 table {{ border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }}
 th, td {{ text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }}
 th {{ font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }}

@@ -54,5 +54,24 @@ class BudgetTest(unittest.TestCase):
         self.assertEqual(render.drawn(self.bd)[1], 0)
 
 
+class PaletteTest(unittest.TestCase):
+    def test_override_one_token_in_one_mode(self):
+        colors = render.palette({"light": {"add": "rgb(0, 128, 0)"}})
+        self.assertEqual(colors["light"]["add"], "rgb(0, 128, 0)")
+        self.assertEqual(colors["dark"]["add"], render.PALETTE["dark"]["add"])
+        self.assertEqual(render.PALETTE["light"]["add"], "#1f8a4c")
+
+    def test_unknown_mode_or_token_is_an_error(self):
+        with self.assertRaisesRegex(ValueError, "unknown token 'green'"):
+            render.palette({"light": {"green": "#0f0"}})
+        with self.assertRaisesRegex(ValueError, "not a mode"):
+            render.palette({"sepia": {"add": "#0f0"}})
+
+    def test_a_value_cannot_escape_the_style_element(self):
+        for bad in ("red; } body { display: none", "#fff</style><script>", "url('x')", 7):
+            with self.assertRaisesRegex(ValueError, "plain CSS color"):
+                render.palette({"dark": {"bg": bad}})
+
+
 if __name__ == "__main__":
     unittest.main()
