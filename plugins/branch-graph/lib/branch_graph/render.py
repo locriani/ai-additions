@@ -315,8 +315,9 @@ def _metrics_panel(report: Report, paths: set[str], anchors: Anchors) -> str:
     if rows:
         body, last = [], object()
         for r in sorted(rows, key=lambda r: (r.path, r.cls or "", (r.head or r.base).start)):
-            if (r.path, r.cls) != last and r.cls:
-                body.append(f'<tr class="cls"><td colspan="5" class="mono">{escape(r.cls)} <span class="muted">{escape(r.path)}</span></td></tr>')
+            if (r.path, r.cls) != last:
+                cls = f"{escape(r.cls)} " if r.cls else ""
+                body.append(f'<tr class="cls"><td colspan="5" class="mono">{cls}<span class="muted">{escape(r.path)}</span></td></tr>')
             last = (r.path, r.cls)
             f, side = (r.head, "n") if r.head else (r.base, "o")
             target = anchors.lines.get((r.path, side, f.start)) or anchors.paths.get(r.path)
