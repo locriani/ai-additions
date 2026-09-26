@@ -54,6 +54,7 @@ Path(os.environ["BH_STUB_LOG"]).write_text(json.dumps({
     "argv": argv, "prompt": prompt, "wt_exists": wt.is_dir(),
     "wt_head": subprocess.run(["git", "-C", str(wt), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip(),
     "ceiling": os.environ.get("CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS")}))
+print(json.dumps({"type": "result", "total_cost_usd": 0.01}))
 mode = os.environ["BH_STUB"]
 docs = json.loads(os.environ["BH_STUB_DOCS"])
 if mode == "crash":
@@ -158,7 +159,7 @@ class Report(unittest.TestCase):
 class Run(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        root = Path(self.tmp.name)
+        root = Path(self.tmp.name).resolve()
         self.repo = root / "repo"
         self.repo.mkdir()
         git(self.repo, "init", "-q", "-b", "main")
@@ -192,7 +193,7 @@ class Run(unittest.TestCase):
         return json.loads(self.log.read_text())
 
     def assert_no_worktree_left(self):
-        self.assertEqual(len(git(self.repo, "worktree", "list", "--porcelain").split("\n\n")), 1,
+        self.assertEqual(git(self.repo, "worktree", "list", "--porcelain").count("worktree "), 1,
                          git(self.repo, "worktree", "list"))
         self.assertFalse(Path(self.logged()["prompt"][self.logged()["prompt"].index("--worktree") + 1]).exists())
 
@@ -226,6 +227,12 @@ class Run(unittest.TestCase):
         self.assertEqual(p.returncode, 0, p.stderr)
         self.assertEqual(git(self.repo, "status", "--porcelain"), before)
         self.assert_no_worktree_left()
+
+    def test_out_inside_the_checkout_is_not_a_change(self):
+        self.out = self.repo / "bug-hunt-report"
+        p = self.run_cli("clean")
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertTrue((self.out / "session.json").exists())
 
     def test_crash_writes_incomplete_report(self):
         p = self.run_cli("crash")
