@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 import sys
@@ -57,6 +58,45 @@ class CliTest(unittest.TestCase):
             self.assertIn(f'<details id="{anchor}"', page)
         self.assertIn("Y = &#x27;&lt;x&gt;&#x27;", page)
         self.assertIn("securityLevel", page)
+
+    def panel(self, page, module):
+        m = re.search(rf'<details id="(n-\d+)"><summary><span class="mono">{re.escape(module)}</span>.*?</details>', page, re.S)
+        self.assertIsNotNone(m, module)
+        return m.group(1), m.group(0)
+
+    def test_new_edge_links_to_the_line_that_created_it(self):
+        self.run_cli()
+        page = self.out.read_text()
+        anchor = re.search(r'href="#([\w-]+)"[^>]*>c\.py:2<', page).group(1)
+        self.assertRegex(page, rf'<span[^>]*id="{anchor}"[^>]*>.*import a</span>')
+
+    def test_diff_is_split_per_file_with_line_numbers(self):
+        self.run_cli()
+        _, b = self.panel(self.out.read_text(), "b")
+        self.assertIn("b.py", b)
+        self.assertRegex(b, r'<span class="l add"[^>]*><i></i><i>2</i>\+Y = ')
+        self.assertRegex(b, r'<span class="l del"[^>]*><i>1</i><i></i>-X = 1')
+
+    def test_panel_lists_connections_both_ways(self):
+        self.run_cli()
+        page = self.out.read_text()
+        a_id, a = self.panel(page, "a")
+        b_id, _ = self.panel(page, "b")
+        c_id, c = self.panel(page, "c")
+        self.assertIn(f'href="#{a_id}"', c)
+        self.assertIn(f'href="#{b_id}"', c)
+        self.assertIn(f'href="#{c_id}"', a)
+        self.assertIn("Imported by", a)
+
+    def test_every_drawn_edge_has_a_target_on_the_page(self):
+        self.run_cli()
+        page = self.out.read_text()
+        mmd = self.out.with_suffix(".mmd").read_text()
+        data = json.loads(re.search(r'<script type="application/json" id="bg-data">(.*?)</script>', page, re.S).group(1))
+        self.assertEqual(len(data["links"]), len(re.findall(r" (?:-->|==>|-\.->) ", mmd)))
+        for link in data["links"]:
+            self.assertIn(f'id="{link["href"]}"', page)
+            self.assertIn(" -> ", link["title"])
 
     def test_rules_and_notes(self):
         rules = Path(self.tmp.name, "ARCH.md")

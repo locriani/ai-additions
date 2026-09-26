@@ -30,5 +30,29 @@ class DrawnTest(unittest.TestCase):
         self.assertEqual(mmd.count("-->") + mmd.count("==>"), 3)
 
 
+class BudgetTest(unittest.TestCase):
+    """Context is added most-connected first while the drawn edges fit the budget; touched modules are always drawn."""
+
+    def setUp(self):
+        files = {f"{m}.py": (m,) for m in "tuabc"}
+        base, head = d.Graph(files=dict(files)), d.Graph(files=dict(files))
+        for g in (base, head):
+            for src, dst in ("at", "au", "ta", "bt", "cu", "tu"):
+                g.add(d.Edge((src,), (dst,), f"{src}.py", 1))
+        self.bd = d.diff(base, head, {"t.py": (1, 0), "u.py": (0, 1)})
+
+    def test_most_connected_context_first(self):
+        self.assertEqual(render.drawn(self.bd, budget=4), ([("a",), ("t",), ("u",)], 2))
+
+    def test_a_context_module_that_does_not_fit_stops_the_fill(self):
+        self.assertEqual(render.drawn(self.bd, budget=3), ([("t",), ("u",)], 3))
+
+    def test_touched_modules_are_drawn_even_over_budget(self):
+        self.assertEqual(render.drawn(self.bd, budget=0), ([("t",), ("u",)], 3))
+
+    def test_the_default_budget_draws_everything_here(self):
+        self.assertEqual(render.drawn(self.bd)[1], 0)
+
+
 if __name__ == "__main__":
     unittest.main()
