@@ -19,7 +19,7 @@
     {
       "name": "bug-hunt",
       "description": "Headless bug hunt that reports only bugs a failing repro proves; exit 1 on findings.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./plugins/bug-hunt",
       "author": {
         "name": "Zach Gardner",
