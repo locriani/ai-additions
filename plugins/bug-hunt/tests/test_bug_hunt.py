@@ -53,7 +53,8 @@ wt, out = Path(opt("--worktree")), Path(opt("--out"))
 Path(os.environ["BH_STUB_LOG"]).write_text(json.dumps({
     "argv": argv, "prompt": prompt, "wt_exists": wt.is_dir(),
     "wt_head": subprocess.run(["git", "-C", str(wt), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip(),
-    "ceiling": os.environ.get("CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS")}))
+    "ceiling": os.environ.get("CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS"),
+    "env": {k: v for k, v in os.environ.items() if k.endswith(("CACHE", "CACHE_DIR", "_HOME", "MODCACHE", "_PATH"))}}))
 print(json.dumps({"type": "result", "total_cost_usd": 0.01}))
 mode = os.environ["BH_STUB"]
 docs = json.loads(os.environ["BH_STUB_DOCS"])
@@ -185,9 +186,9 @@ class Run(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def run_cli(self, mode, *extra, out=True):
+    def run_cli(self, mode, *extra, out=True, env=None):
         argv = [sys.executable, str(BIN), "run", "--repo", str(self.repo), *(["--out", str(self.out)] if out else []), *extra]
-        return subprocess.run(argv, capture_output=True, text=True, env={**self.env, "BH_STUB": mode})
+        return subprocess.run(argv, capture_output=True, text=True, env={**self.env, "BH_STUB": mode, **(env or {})})
 
     def logged(self):
         return json.loads(self.log.read_text())
@@ -213,13 +214,46 @@ class Run(unittest.TestCase):
         allowed = argv[argv.index("--allowedTools") + 1].split(",")
         for tool in ("Read", "Grep", "Glob", "Agent", "Bash", f"Edit(/{wt}/**)", f"Edit(/{self.out}/**)"):
             self.assertIn(tool, allowed)
-        self.assertIn("Bash(git push *)", argv[argv.index("--disallowedTools") + 1].split(","))
+        self.assertIn("Read(~/.ssh/**)", argv[argv.index("--disallowedTools") + 1].split(","))
         self.assertTrue(log["wt_exists"])
         self.assertEqual(log["wt_head"], self.head)
         self.assertTrue(log["ceiling"])
         self.assertFalse(Path(wt).is_relative_to(self.repo))
         self.assertTrue((self.out / "findings.md").exists())
         self.assert_no_worktree_left()
+
+    def test_bash_runs_in_a_fail_closed_sandbox(self):
+        p = self.run_cli("clean", "--allow-domain", "github.com", env={"BH_PROBE_TOKEN": "x"})
+        self.assertEqual(p.returncode, 0, p.stderr)
+        log = self.logged()
+        argv, prompt = log["argv"], log["prompt"]
+        wt = Path(prompt[prompt.index("--worktree") + 1])
+        box = json.loads(argv[argv.index("--settings") + 1])["sandbox"]
+        self.assertIs(box["enabled"], True)
+        self.assertIs(box["allowUnsandboxedCommands"], False)
+        self.assertIs(box["failIfUnavailable"], True)
+        writable = box["filesystem"]["allowWrite"]
+        self.assertIn(str(wt), writable)
+        self.assertIn(str(self.out), writable)
+        self.assertIn(str(self.repo / ".git" / "worktrees" / wt.name), writable)  # git's index for the worktree
+        self.assertFalse(any(Path(w) == self.repo for w in writable))
+        for secret in ("~/.ssh", "~/.aws", "~/.config/gh"):
+            self.assertIn(secret, box["filesystem"]["denyRead"])
+        net = box["network"]
+        self.assertIs(net["strictAllowlist"], True)
+        self.assertIn("pypi.org", net["allowedDomains"])
+        self.assertIn("registry.npmjs.org", net["allowedDomains"])
+        self.assertIn("github.com", net["allowedDomains"])
+        self.assertIn({"name": "BH_PROBE_TOKEN", "mode": "deny"}, box["credentials"]["envVars"])
+        self.assertNotIn({"name": "PATH", "mode": "deny"}, box["credentials"]["envVars"])
+        scratch = wt.parent
+        for var in ("npm_config_cache", "UV_CACHE_DIR", "PIP_CACHE_DIR", "XDG_CACHE_HOME", "CARGO_HOME", "GOMODCACHE"):
+            self.assertTrue(Path(log["env"][var]).is_relative_to(scratch), var)
+
+    def test_github_is_not_reachable_by_default(self):
+        self.run_cli("clean")
+        argv = self.logged()["argv"]
+        self.assertNotIn("github.com", json.loads(argv[argv.index("--settings") + 1])["sandbox"]["network"]["allowedDomains"])
 
     def test_clean_run_exits_0_and_leaves_checkout_alone(self):
         before = git(self.repo, "status", "--porcelain")
