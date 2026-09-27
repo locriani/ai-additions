@@ -62,6 +62,7 @@ Every other row is still keep-to-side.
 | `prd-design` | 2026-09-15 | plan "prd-design — and the four around it" approved | No |
 | `mermaid-system-design` | 2026-09-15 | "add / register in ai-additions" | **Yes** — installed from the local marketplace |
 | `branch-graph` | 2026-09-23 | "branch-graph is approved for addition and enabling" (Zach, 18:42) | **Yes** — enabled by the same phrase; installed from the local marketplace once merged — installed 2026-09-23 20:15 CT on "merged, install it" (PR 3), 0.1.0 at user scope; 22/22 on main at 4d06e06; updated to **0.5.0** on 2026-09-26 at 14:2x CT on "commit / merge / install" after PR 15 (complexity, duplication and coverage metrics as branch deltas; 0.2.0–0.4.0 came through PRs 12–14, and 0.4.0 was installed by the chief-of-stuff-improvements session). 105 tests OK on main at 8ebc9d5 |
+| `bug-hunt` | 2026-09-26 | "bug-hunt is approved for addition" (Zach, 18:06), after the plan (headless, repo-agnostic; a finding needs a repro that fails against the current code; Markdown and JSON report, exit 1 on findings; report only; git worktree at HEAD; hot files, $10 cap) was approved in plan mode | **Yes** — 2026-09-26 19:18 CT, on "commit, merge, install, approved for enablement" (19:17) after PR 18 merged (28dc63d): `claude plugin marketplace update ai-additions` + `claude plugin install bug-hunt@ai-additions --scope user` (0.1.0). 22 tests OK from the installed copy; live run on the seeded fixture exit 1 with only the planted bug |
 
 ### Rules — `rules/`, copied verbatim, deployed nowhere
 
