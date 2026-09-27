@@ -5,8 +5,8 @@
   bug-hunt report FINDINGS.json
 
 `run` makes a detached worktree at HEAD outside the checkout, runs `claude -p "/bug-hunt:bug-hunt ..."` with
-no permission prompts and a spend cap, removes the worktree whatever happens, then reports. The skill writes
-only inside the worktree and the out dir; a checkout that changed anyway is recorded as an incomplete reason.
+no permission prompts and a spend cap, removes the worktree whatever happens, then reports. Bash runs in Claude
+Code's sandbox (see `sandbox()`), and a checkout that changed anyway is recorded as an incomplete reason.
 
 `report` validates findings.json and writes findings.md next to it; the JSON is the single source. `run` also keeps
 claude's own JSON result (cost, turns, session id) as session.json.
@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shlex
 import shutil
 import subprocess
@@ -34,6 +35,22 @@ FIELDS = ("id", "title", "severity", "path", "line", "expected", "actual", "inte
 REPRO = ("command", "content", "failure_excerpt")
 BG_WAIT_MS = str(60 * 60 * 1000)  # -p waits this long for subagents still running; the default is 10 min
 IN_PROGRESS = "in progress"  # the reason the skill writes with each partial save; run drops it once it knows why
+
+# The hunt reads untrusted text and runs the repo's code with Bash auto-allowed, so Bash runs in Claude Code's own
+# sandbox: it fails closed, may write only the worktree, its git dir and the out dir (plus the sandbox's own temp
+# dirs, so a checkout under /tmp is caught only by the status check), cannot read credentials or see token-like env
+# vars, and reaches only package registries. Verified live on macOS Seatbelt, 2026-09-26.
+CREDENTIALS = ("~/.ssh", "~/.aws", "~/.gnupg", "~/.config/gh", "~/.config/gcloud", "~/.azure", "~/.kube", "~/.docker",
+               "~/.netrc", "~/.git-credentials", "~/.npmrc", "~/.pypirc", "~/.gem/credentials", "~/.cargo/credentials.toml",
+               "~/.composer/auth.json", "~/.config/claude", "~/.claude.json")
+REGISTRIES = ("pypi.org", "files.pythonhosted.org", "registry.npmjs.org", "registry.yarnpkg.com", "rubygems.org",
+              "index.rubygems.org", "proxy.golang.org", "sum.golang.org", "index.crates.io", "static.crates.io",
+              "crates.io", "repo.packagist.org", "packagist.org")
+SECRET_ENV = re.compile(r"TOKEN|SECRET|PASSW|CREDENTIAL|API_?KEY|ACCESS_KEY|PRIVATE_KEY|AUTH", re.I)
+# ponytail: one cache variable per stack met so far; a stack whose installer caches elsewhere fails its install
+# in the sandbox, which the report shows as an unrunnable baseline. Add its variable here when that happens.
+CACHES = ("XDG_CACHE_HOME", "npm_config_cache", "YARN_CACHE_FOLDER", "UV_CACHE_DIR", "PIP_CACHE_DIR", "CARGO_HOME",
+          "GOMODCACHE", "GOCACHE", "BUNDLE_PATH", "COMPOSER_HOME")
 
 
 def problems(doc) -> list[str]:
@@ -130,6 +147,15 @@ def status(repo: Path, out: Path) -> str:
     return git(repo, "status", "--porcelain", *spec).stdout
 
 
+def sandbox(wt: Path, gitdir: Path, out: Path, domains: list[str]) -> dict:
+    return {"sandbox": {
+        "enabled": True, "autoAllowBashIfSandboxed": True, "allowUnsandboxedCommands": False, "failIfUnavailable": True,
+        "filesystem": {"allowWrite": [str(wt), str(gitdir), str(out)], "denyRead": list(CREDENTIALS)},
+        "network": {"allowedDomains": [*REGISTRIES, *domains], "strictAllowlist": True},
+        "credentials": {"envVars": [{"name": k, "mode": "deny"} for k in sorted(os.environ) if SECRET_ENV.search(k)]},
+    }}
+
+
 def rule_path(p: Path) -> str:
     return "/" + str(p)  # permission rules mark an absolute path with a leading `//`
 
@@ -157,14 +183,19 @@ def run(args) -> int:
             prompt = shlex.join(["/bug-hunt:bug-hunt", "--worktree", str(wt), "--out", str(out),
                                  *[a for p in args.path for a in ("--path", p)],
                                  *(["--since", args.since] if args.since else [])])
+            gitdir = Path(git(wt, "rev-parse", "--absolute-git-dir").stdout.strip())
             allowed = ["Read", "Grep", "Glob", "Agent", "Bash", f"Edit({rule_path(wt)}/**)", f"Edit({rule_path(out)}/**)"]
+            denied = [f"Read({c}/**)" for c in CREDENTIALS] + [f"Read({c})" for c in CREDENTIALS]
             argv = ["claude", "-p", prompt, "--permission-mode", "dontAsk", "--permission-prompts", "none",
                     "--max-budget-usd", str(args.budget), "--output-format", "json",
-                    "--allowedTools", ",".join(allowed), "--disallowedTools", "Bash(git push *)"]
-            env = {**os.environ, "CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS": BG_WAIT_MS}
+                    "--settings", json.dumps(sandbox(wt, gitdir, out, args.allow_domain)),
+                    "--allowedTools", ",".join(allowed), "--disallowedTools", ",".join(denied)]
+            caches = scratch / "cache"
+            env = {**os.environ, "CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS": BG_WAIT_MS,
+                   **{k: str(caches / k.lower()) for k in CACHES}}
             try:
                 with open(out / "session.json", "w") as session:  # claude's own result: cost, turns, session id
-                    code = subprocess.run(argv, cwd=wt, env=env, stdout=session).returncode
+                    code = subprocess.run(argv, cwd=wt, env=env, stdin=subprocess.DEVNULL, stdout=session).returncode
             except FileNotFoundError:
                 reasons.append("claude is not on PATH")
     finally:
@@ -206,6 +237,8 @@ def main(argv: list[str]) -> int:
     r.add_argument("--path", action="append", default=[], help="limit the hunt to this path; repeatable")
     r.add_argument("--since", help="limit the hunt to files changed since this ref")
     r.add_argument("--budget", type=float, default=10.0, help="spend cap in USD (default 10)")
+    r.add_argument("--allow-domain", action="append", default=[],
+                   help="let sandboxed Bash reach this domain too (e.g. github.com for Swift or Go modules); repeatable")
     p = sub.add_parser("report", help="validate findings.json, write findings.md, exit 0/1/2")
     p.add_argument("findings", type=Path)
     args = ap.parse_args(argv)

@@ -54,7 +54,7 @@ Path(os.environ["BH_STUB_LOG"]).write_text(json.dumps({
     "argv": argv, "prompt": prompt, "wt_exists": wt.is_dir(),
     "wt_head": subprocess.run(["git", "-C", str(wt), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip(),
     "ceiling": os.environ.get("CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS"),
-    "env": {k: v for k, v in os.environ.items() if k.endswith(("CACHE", "CACHE_DIR", "_HOME", "MODCACHE", "_PATH"))}}))
+    "env": {k: v for k, v in os.environ.items() if k.upper().endswith(("CACHE", "CACHE_DIR", "_HOME", "MODCACHE", "_PATH"))}}))
 print(json.dumps({"type": "result", "total_cost_usd": 0.01}))
 mode = os.environ["BH_STUB"]
 docs = json.loads(os.environ["BH_STUB_DOCS"])
