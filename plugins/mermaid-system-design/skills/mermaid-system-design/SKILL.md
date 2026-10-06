@@ -97,23 +97,25 @@ reader finds. Read them against each other before shipping, in both directions.
 
 ## Colours and viewer scheme
 
-Use only Mermaid's built-in `default` and `dark` themes, with no custom colours. Diagrams follow the viewer's light or dark scheme; do not force a light diagram or a white diagram card in dark mode. Do not override theme colours through `themeVariables`, `classDef`, `style`, `linkStyle`, or CSS.
+Use only Mermaid's built-in `default` and `dark` themes, with no custom colours. Diagrams follow the viewer's light or dark scheme; do not force a light diagram or a white diagram card in dark mode. Do not override theme colours through `themeVariables`, `classDef`, `style`, `linkStyle`, or CSS. The one `themeVariables` key this allows is `darkMode`, which is a switch and not a colour: Mermaid's theming documentation requires `darkMode: true` alongside `theme: "dark"` so that background handling and derived colours follow dark rules.
 
 Both mechanisms below satisfy the rule. This skill does not choose between them; the choice is left to the consuming project.
 
 **Browser rendering:** initialise Mermaid from the viewer's scheme before rendering:
 
 ```js
-mermaid.initialize({theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default"});
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+mermaid.initialize({theme: dark ? "dark" : "default", themeVariables: {darkMode: dark}});
 ```
 
-If the viewer changes scheme while the page is open, initialise with the new theme and render again from the Mermaid source. If the page exposes a `data-theme` override, use that selection ahead of the system preference.
+If the viewer changes scheme while the page is open, initialise with the new theme and `darkMode` and render again from the Mermaid source. If the page exposes a `data-theme` override, use that selection ahead of the system preference.
 
-**Pre-rendered SVGs:** produce two SVGs per diagram, with transparent backgrounds:
+**Pre-rendered SVGs:** produce two SVGs per diagram, with transparent backgrounds. The dark render takes the same `darkMode` switch through a config file:
 
 ```sh
+echo '{"themeVariables": {"darkMode": true}}' > dark.json
 mmdc -q -i d.mmd -o d-default.svg -t default -b transparent
-mmdc -q -i d.mmd -o d-dark.svg -t dark -b transparent
+mmdc -q -i d.mmd -o d-dark.svg -t dark -c dark.json -b transparent
 ```
 
 Inline both complete SVGs inside one `div.diagram`, assigning `svg.d-light` to the default render and `svg.d-dark` to the dark render. Give every SVG and every internal id a unique prefix per diagram and theme; update all corresponding references, including fragment links, `url(#...)` references and SVG style selectors, so the two renders and other diagrams cannot collide. The following shows the wrapper; replace each comment with that render's SVG contents and retain its `viewBox` and other required attributes:
