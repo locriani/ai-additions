@@ -88,3 +88,7 @@ python3 skills/mermaid-system-design/scripts/test_mermaid_check.py
 Diagrams only: vocabulary, edge semantics, how to split them, syntax, and verification. It has
 nothing to say about the document around the diagram — write-up structure, trade-off tables,
 appendices, or export.
+
+## Progress
+
+- 2026-10-06 — 1.1.0: added the built-in `default`/`dark` theme rule, with viewer-scheme handling through browser rendering or paired SVGs, and the clipped `classDiagram` cardinality trap (`"many"` and `"1..many"` → `"*"` and `"1..*"`) confirmed by Zach. The choice between the two rendering mechanisms for frank-lloyd-aight's `plan-page.md` remains pending with Zach and FLA Improvements. Requested in [tracker issue 8](https://labs.gauntletai.com/zachgardner/tracker/-/issues/8).
