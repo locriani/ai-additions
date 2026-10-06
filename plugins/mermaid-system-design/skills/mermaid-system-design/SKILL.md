@@ -95,6 +95,55 @@ challenge and the most expensive to defend.
 prose describing a read-through cache is a contradiction, and it is the first thing a careful
 reader finds. Read them against each other before shipping, in both directions.
 
+## Colours and viewer scheme
+
+Use only Mermaid's built-in `default` and `dark` themes, with no custom colours. Diagrams follow the viewer's light or dark scheme; do not force a light diagram or a white diagram card in dark mode. Do not override theme colours through `themeVariables`, `classDef`, `style`, `linkStyle`, or CSS. The one `themeVariables` key this allows is `darkMode`, which is a switch and not a colour: Mermaid's theming documentation requires `darkMode: true` alongside `theme: "dark"` so that background handling and derived colours follow dark rules.
+
+Both mechanisms below satisfy the rule. This skill does not choose between them; the choice is left to the consuming project.
+
+**Browser rendering:** initialise Mermaid from the viewer's scheme before rendering:
+
+```js
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+mermaid.initialize({theme: dark ? "dark" : "default", themeVariables: {darkMode: dark}});
+```
+
+If the viewer changes scheme while the page is open, initialise with the new theme and `darkMode` and render again from the Mermaid source. If the page exposes a `data-theme` override, use that selection ahead of the system preference.
+
+**Pre-rendered SVGs:** produce two SVGs per diagram, with transparent backgrounds. The dark render takes the same `darkMode` switch through a config file:
+
+```sh
+echo '{"themeVariables": {"darkMode": true}}' > dark.json
+mmdc -q -i d.mmd -o d-default.svg -t default -b transparent
+mmdc -q -i d.mmd -o d-dark.svg -t dark -c dark.json -b transparent
+```
+
+Inline both complete SVGs inside one `div.diagram`, assigning `svg.d-light` to the default render and `svg.d-dark` to the dark render. Give every SVG and every internal id a unique prefix per diagram and theme; update all corresponding references, including fragment links, `url(#...)` references and SVG style selectors, so the two renders and other diagrams cannot collide. The following shows the wrapper; replace each comment with that render's SVG contents and retain its `viewBox` and other required attributes:
+
+```html
+<div class="diagram">
+  <svg id="d-default" class="d-light"><!-- default SVG contents --></svg>
+  <svg id="d-dark" class="d-dark"><!-- dark SVG contents --></svg>
+</div>
+```
+
+Hide one SVG with CSS, following `prefers-color-scheme` unless `:root[data-theme]` explicitly selects light or dark:
+
+```css
+.diagram > svg.d-light { display: block; }
+.diagram > svg.d-dark { display: none; }
+
+@media (prefers-color-scheme: dark) {
+  .diagram > svg.d-light { display: none; }
+  .diagram > svg.d-dark { display: block; }
+}
+
+:root[data-theme="light"] .diagram > svg.d-light { display: block; }
+:root[data-theme="light"] .diagram > svg.d-dark { display: none; }
+:root[data-theme="dark"] .diagram > svg.d-light { display: none; }
+:root[data-theme="dark"] .diagram > svg.d-dark { display: block; }
+```
+
 ## Syntax traps
 
 | Construct | What happens |
@@ -106,8 +155,11 @@ reader finds. Read them against each other before shipping, in both directions.
 | `<br/>` `→` `%` `,` `:` `#quot;` inside a quoted label | Fine. Quoting is what makes them safe |
 | `[["log"]]` `[("store")]` `{"branch"}` `(["actor"])` | Fine, all balanced shapes |
 | `A@{ shape: cyl }` — v11.3+ generic shapes | Renders, but version-gated. Verify in the target renderer before relying on it |
-| `subgraph`+`direction`, `classDef`/`class`, `linkStyle`, `A --> B & C` | Fine |
+| `subgraph`+`direction`, `classDef`/`class`, `linkStyle`, `A --> B & C` | Valid syntax; styling must obey the colour rule above |
 | Inside an HTML page, `<br/>` in a label | Must be written `&lt;br/&gt;` or the browser eats it first |
+| `classDiagram` cardinalities `"many"` and `"1..many"` | Render clipped: "many is clipped". Write `"*"` and `"1..*"` |
+
+This is a source defect `mermaid-check.py` cannot catch: it renders without a syntax failure. Zach confirmed it by viewing the renderer's output on 2026-10-06; the quoted description is his observation.
 
 `sequenceDiagram`, `erDiagram`, `stateDiagram-v2`, `C4Context`, `block-beta` and
 `architecture-beta` all render. Reach past `flowchart` only when the thing being shown is
