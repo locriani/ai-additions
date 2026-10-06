@@ -155,6 +155,9 @@ Hide one SVG with CSS, following `prefers-color-scheme` unless `:root[data-theme
 | `A@{ shape: cyl }` — v11.3+ generic shapes | Renders, but version-gated. Verify in the target renderer before relying on it |
 | `subgraph`+`direction`, `classDef`/`class`, `linkStyle`, `A --> B & C` | Valid syntax; styling must obey the colour rule above |
 | Inside an HTML page, `<br/>` in a label | Must be written `&lt;br/&gt;` or the browser eats it first |
+| `classDiagram` cardinalities `"many"` and `"1..many"` | Render clipped: "many is clipped". Write `"*"` and `"1..*"` |
+
+This is a source defect `mermaid-check.py` cannot catch: it renders without a syntax failure. Zach confirmed it by viewing the renderer's output on 2026-10-06; the quoted description is his observation.
 
 `sequenceDiagram`, `erDiagram`, `stateDiagram-v2`, `C4Context`, `block-beta` and
 `architecture-beta` all render. Reach past `flowchart` only when the thing being shown is
