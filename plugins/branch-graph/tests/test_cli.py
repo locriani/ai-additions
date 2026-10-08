@@ -189,6 +189,23 @@ class CliTest(unittest.TestCase):
                                  capture_output=True, text=True, check=True).stdout.strip()
             self.assertEqual(data[key], sha)
 
+    def test_json_shas_are_commits_for_an_annotated_tag(self):
+        base_sha = subprocess.run(["git", "-C", str(self.repo), "rev-parse", "base^{commit}"],
+                                  capture_output=True, text=True, check=True).stdout.strip()
+        git(self.repo, "-c", "user.name=t", "-c", "user.email=t@t", "tag", "-a", "v1", "-m", "v1", base_sha)
+        report = Path(self.tmp.name, "summary.json")
+        argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "v1", "--root", ".", "--out", str(self.out),
+                "--json", str(report)]
+        subprocess.run(argv, capture_output=True, text=True, check=True)
+        data = json.loads(report.read_text())
+        for key, revision in (("base", "v1^{commit}"), ("head", "HEAD^{commit}")):
+            sha = subprocess.run(["git", "-C", str(self.repo), "rev-parse", revision],
+                                 capture_output=True, text=True, check=True).stdout.strip()
+            self.assertEqual(data[key], sha)
+        tag_sha = subprocess.run(["git", "-C", str(self.repo), "rev-parse", "v1"],
+                                 capture_output=True, text=True, check=True).stdout.strip()
+        self.assertNotEqual(data["base"], tag_sha)
+
     def test_json_drift_edge_and_verdict(self):
         rules = Path(self.tmp.name, "ARCH.md")
         rules.write_text("```import-rules\nc -> b\n```\n")
@@ -220,15 +237,24 @@ class CliTest(unittest.TestCase):
         ])
         self.assertTrue(self.out.is_file())
 
-    def test_fail_on_drift_exits_0_without_drift(self):
+    def test_fail_on_drift_without_rules_is_a_usage_error(self):
         argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "base", "--root", ".", "--out", str(self.out),
                 "--fail-on-drift"]
+        run = subprocess.run(argv, capture_output=True, text=True)
+        self.assertEqual(run.returncode, 2)
+        self.assertIn("--fail-on-drift needs --rules", run.stderr)
+
+    def test_fail_on_drift_exits_0_when_every_new_edge_is_allowed(self):
+        rules = Path(self.tmp.name, "ARCH.md")
+        rules.write_text("```import-rules\nc -> a\nc -> b\n```\n")
+        argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "base", "--root", ".", "--out", str(self.out),
+                "--rules", str(rules), "--fail-on-drift"]
         run = subprocess.run(argv, capture_output=True, text=True)
         self.assertEqual(run.returncode, 0)
         self.assertEqual(run.stdout.splitlines(), [
             "nodes +1 −0 ~1 edges +2 −0 drift=0",
-            "c -> a  c.py:2  no rules",
-            "c -> b  c.py:3  no rules",
+            "c -> a  c.py:2  allowed",
+            "c -> b  c.py:3  allowed",
         ])
 
     def test_default_exit_is_0_with_drift(self):
@@ -284,6 +310,24 @@ class ExcludeAndViewsCliTest(unittest.TestCase):
         self.assertNotIn("tests.", mmd)
         self.assertNotIn("test_c", page)
         self.assertRegex(page, r"\b4 (?:modules? )?excluded\b")
+
+    def test_json_binds_excluded_views_and_removed_edges(self):
+        commit(self.repo, {"a.py": "X = 1\n"}, "remove a's import of b")
+        report = Path(self.tmp.name, "summary.json")
+        lines = self.run_cli("--exclude", "tests.*", "--max-nodes", "5", "--json", str(report))
+        data = json.loads(report.read_text())
+        self.assertIs(type(data["excluded"]), int)
+        self.assertGreater(data["excluded"], 0)
+        excluded = re.search(r"\bexcluded=(\d+)\b", lines[0])
+        self.assertIsNotNone(excluded)
+        self.assertEqual(data["excluded"], int(excluded.group(1)))
+        views = re.search(r"\bviews=(\d+)\b", lines[0])
+        self.assertIsNotNone(views)
+        self.assertEqual(data["views"], int(views.group(1)))
+        self.assertTrue(data["edges"]["removed"])
+        for edge in data["edges"]["removed"]:
+            self.assertEqual(set(edge), {"src", "dst", "file", "line"})
+            self.assertEqual(edge, {"src": "a", "dst": "b", "file": "a.py", "line": 1})
 
     def test_views_replace_page_mmd(self):
         lines = self.run_cli("--exclude", "tests.*", "--max-nodes", "5")
