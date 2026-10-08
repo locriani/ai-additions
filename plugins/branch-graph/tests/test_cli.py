@@ -237,6 +237,18 @@ class CliTest(unittest.TestCase):
         ])
         self.assertTrue(self.out.is_file())
 
+    def test_a_missing_rules_file_is_a_usage_error(self):
+        rules = Path(self.tmp.name, "missing-rules.md")
+        for fail_on_drift in (False, True):
+            with self.subTest(fail_on_drift=fail_on_drift):
+                argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "base", "--root", ".", "--out", str(self.out),
+                        "--rules", str(rules)]
+                if fail_on_drift:
+                    argv.append("--fail-on-drift")
+                run = subprocess.run(argv, capture_output=True, text=True)
+                self.assertEqual(run.returncode, 2)
+                self.assertIn(str(rules), run.stderr)
+
     def test_fail_on_drift_without_rules_is_a_usage_error(self):
         argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "base", "--root", ".", "--out", str(self.out),
                 "--fail-on-drift"]
