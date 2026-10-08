@@ -244,6 +244,15 @@ class CliTest(unittest.TestCase):
         self.assertEqual(run.returncode, 2)
         self.assertIn("--fail-on-drift needs --rules", run.stderr)
 
+    def test_fail_on_drift_with_a_rules_file_without_a_fence_is_a_usage_error(self):
+        rules = Path(self.tmp.name, "ARCH.md")
+        rules.write_text("This document describes the project architecture.\n")
+        argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "base", "--root", ".", "--out", str(self.out),
+                "--rules", str(rules), "--fail-on-drift"]
+        run = subprocess.run(argv, capture_output=True, text=True)
+        self.assertEqual(run.returncode, 2)
+        self.assertIn("no import-rules block", run.stderr)
+
     def test_fail_on_drift_exits_0_when_every_new_edge_is_allowed(self):
         rules = Path(self.tmp.name, "ARCH.md")
         rules.write_text("```import-rules\nc -> a\nc -> b\n```\n")
