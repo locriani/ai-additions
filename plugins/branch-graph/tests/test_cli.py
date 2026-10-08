@@ -147,7 +147,8 @@ class CliTest(unittest.TestCase):
     def test_without_a_tool_the_section_says_what_to_install(self):
         hidden = Path(self.tmp.name, "hidden")
         hidden.mkdir()
-        (hidden / "lizard.py").write_text('raise ImportError("hidden for this test")\n')
+        for name in ("lizard", "radon"):
+            (hidden / f"{name}.py").write_text('raise ImportError("hidden for this test")\n')
         env = {**os.environ, "PYTHONPATH": str(hidden) + os.pathsep + os.environ.get("PYTHONPATH", "")}
         argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "base", "--root", ".", "--out", str(self.out)]
         subprocess.run(argv, capture_output=True, text=True, check=True, env=env)
