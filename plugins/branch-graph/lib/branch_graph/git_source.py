@@ -24,6 +24,9 @@ class GitSource:
     def short(self, rev: str) -> str:
         return self._git("rev-parse", "--short", rev).strip()
 
+    def rev(self, rev: str) -> str:
+        return self._git("rev-parse", rev).strip()
+
     def files(self, rev: str, root: str) -> list[str]:
         return [p for p in self._git("ls-tree", "-r", "-z", "--name-only", rev, "--", root).split("\0") if p]
 
