@@ -40,13 +40,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", type=Path, help="machine-readable summary: nodes, new and removed edges with verdicts, drift count")
     p.add_argument("--fail-on-drift", action="store_true", help="exit 1 when a new import has the verdict drift; the page and output are still written")
     args = p.parse_args(argv)
-    if args.fail_on_drift and not args.rules:
-        p.error("--fail-on-drift needs --rules: without rules no import can be drift")
 
     try:
         colors = render.palette(json.loads(args.colors.read_text()) if args.colors else None)
     except (ValueError, OSError) as e:
         p.error(str(e))
+
+    rules = parse_rules(args.rules.read_text()) if args.rules else None
+    if args.fail_on_drift and rules is None:
+        p.error("--fail-on-drift needs --rules with an import-rules block: no import-rules block found, so no import can be drift")
 
     source = GitSource(args.repo)
     base = args.base or source.merge_base("origin/main", args.head)
@@ -68,7 +70,6 @@ def main(argv: list[str] | None = None) -> int:
                      [str(r) for r in args.coverage], args.dup_scope)
     badges = render.badges(report)
 
-    rules = parse_rules(args.rules.read_text()) if args.rules else None
     notes = json.loads(args.notes.read_text()) if args.notes else {}
     verdicts = {e.key: verdict(e, rules) for e in bd.edges_added}
 
