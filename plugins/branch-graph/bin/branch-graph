@@ -46,7 +46,10 @@ def main(argv: list[str] | None = None) -> int:
     except (ValueError, OSError) as e:
         p.error(str(e))
 
-    rules = parse_rules(args.rules.read_text()) if args.rules else None
+    try:
+        rules = parse_rules(args.rules.read_text()) if args.rules else None
+    except OSError as e:
+        p.error(str(e))
     if args.fail_on_drift and rules is None:
         p.error("--fail-on-drift needs --rules with an import-rules block: no import-rules block found, so no import can be drift")
 
