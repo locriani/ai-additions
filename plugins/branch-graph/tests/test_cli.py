@@ -166,6 +166,84 @@ class CliTest(unittest.TestCase):
         self.assertIn("c reads a&#x27;s settings", page)
         self.assertRegex(page, r"#graph svg #L_n\d+_n\d+_\d+ \{ stroke: var\(--drift\) !important; \}")
 
+    def test_json_summary(self):
+        report = Path(self.tmp.name, "summary.json")
+        stdout = self.run_cli("--json", str(report))
+        data = json.loads(report.read_text())
+        self.assertEqual(set(data), {"base", "head", "nodes", "edges", "drift", "excluded", "views"})
+        self.assertEqual(data["nodes"], {"added": ["c"], "removed": [], "changed": ["b"]})
+        self.assertEqual(data["edges"]["added"], [
+            {"src": "c", "dst": "a", "file": "c.py", "line": 2, "verdict": "no rules"},
+            {"src": "c", "dst": "b", "file": "c.py", "line": 3, "verdict": "no rules"},
+        ])
+        self.assertEqual(stdout.splitlines()[1:], [
+            f'{edge["src"]} -> {edge["dst"]}  {edge["file"]}:{edge["line"]}  {edge["verdict"]}'
+            for edge in data["edges"]["added"]
+        ])
+        self.assertEqual(data["edges"]["removed"], [])
+        self.assertEqual(data["drift"], 0)
+        self.assertIsNone(data["excluded"])
+        self.assertIsNone(data["views"])
+        for key, revision in (("base", "base"), ("head", "HEAD")):
+            sha = subprocess.run(["git", "-C", str(self.repo), "rev-parse", revision],
+                                 capture_output=True, text=True, check=True).stdout.strip()
+            self.assertEqual(data[key], sha)
+
+    def test_json_drift_edge_and_verdict(self):
+        rules = Path(self.tmp.name, "ARCH.md")
+        rules.write_text("```import-rules\nc -> b\n```\n")
+        report = Path(self.tmp.name, "summary.json")
+        self.run_cli("--rules", str(rules), "--json", str(report))
+        data = json.loads(report.read_text())
+        self.assertEqual(data["drift"], 1)
+        self.assertEqual(data["edges"]["added"], [
+            {"src": "c", "dst": "a", "file": "c.py", "line": 2, "verdict": "drift"},
+            {"src": "c", "dst": "b", "file": "c.py", "line": 3, "verdict": "allowed"},
+        ])
+
+    def test_stdout_unchanged_by_json(self):
+        stdout = self.run_cli()
+        report = Path(self.tmp.name, "summary.json")
+        self.assertEqual(self.run_cli("--json", str(report)), stdout)
+
+    def test_fail_on_drift_exits_1_when_drift(self):
+        rules = Path(self.tmp.name, "ARCH.md")
+        rules.write_text("```import-rules\nc -> b\n```\n")
+        argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "base", "--root", ".", "--out", str(self.out),
+                "--rules", str(rules), "--fail-on-drift"]
+        run = subprocess.run(argv, capture_output=True, text=True)
+        self.assertEqual(run.returncode, 1)
+        self.assertEqual(run.stdout.splitlines(), [
+            "nodes +1 −0 ~1 edges +2 −0 drift=1",
+            "c -> a  c.py:2  drift",
+            "c -> b  c.py:3  allowed",
+        ])
+        self.assertTrue(self.out.is_file())
+
+    def test_fail_on_drift_exits_0_without_drift(self):
+        argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "base", "--root", ".", "--out", str(self.out),
+                "--fail-on-drift"]
+        run = subprocess.run(argv, capture_output=True, text=True)
+        self.assertEqual(run.returncode, 0)
+        self.assertEqual(run.stdout.splitlines(), [
+            "nodes +1 −0 ~1 edges +2 −0 drift=0",
+            "c -> a  c.py:2  no rules",
+            "c -> b  c.py:3  no rules",
+        ])
+
+    def test_default_exit_is_0_with_drift(self):
+        rules = Path(self.tmp.name, "ARCH.md")
+        rules.write_text("```import-rules\nc -> b\n```\n")
+        argv = [sys.executable, str(BIN), "--repo", str(self.repo), "--base", "base", "--root", ".", "--out", str(self.out),
+                "--rules", str(rules)]
+        run = subprocess.run(argv, capture_output=True, text=True)
+        self.assertEqual(run.returncode, 0)
+        self.assertEqual(run.stdout.splitlines(), [
+            "nodes +1 −0 ~1 edges +2 −0 drift=1",
+            "c -> a  c.py:2  drift",
+            "c -> b  c.py:3  allowed",
+        ])
+
 
 class ExcludeAndViewsCliTest(unittest.TestCase):
     """Test modules fan into the branch; `--exclude` drops them and `--max-nodes` splits the rest into page-K.mmd views."""
