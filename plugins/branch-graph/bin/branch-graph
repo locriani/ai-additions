@@ -40,6 +40,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", type=Path, help="machine-readable summary: nodes, new and removed edges with verdicts, drift count")
     p.add_argument("--fail-on-drift", action="store_true", help="exit 1 when a new import has the verdict drift; the page and output are still written")
     args = p.parse_args(argv)
+    if args.fail_on_drift and not args.rules:
+        p.error("--fail-on-drift needs --rules: without rules no import can be drift")
 
     try:
         colors = render.palette(json.loads(args.colors.read_text()) if args.colors else None)
@@ -111,7 +113,7 @@ def main(argv: list[str] | None = None) -> int:
             "nodes": {kind: sorted(name(m) for m in modules)
                       for kind, modules in (("added", bd.added), ("removed", bd.removed), ("changed", bd.changed))},
             "edges": {kind: [{"src": name(e.src), "dst": name(e.dst), "file": e.file, "line": e.line,
-                              "verdict": verdicts[e.key] if kind == "added" else verdict(e, rules)} for e in edges]
+                              **({"verdict": verdicts[e.key]} if kind == "added" else {})} for e in edges]
                       for kind, edges in (("added", bd.edges_added), ("removed", bd.edges_removed))},
             "drift": drift,
             "excluded": excluded,
