@@ -24,3 +24,8 @@ Nothing here is installed or enabled by being listed. See
 | [`yoke`](yoke.md) | [`yokeloop/yoke`](https://github.com/yokeloop/yoke) | Plugin — 14 commands incl. `/prd`, `/issues` | 2026-09-15 |
 | [`terminalskills`](terminalskills.md) | [`TerminalSkills/skills`](https://github.com/TerminalSkills/skills) | Skill — `prd-to-issues` | 2026-09-15 |
 | [`session-ledger`](session-ledger.md) | `Standard Configs` (this Mac, not an external repo) | LaunchAgent + CLI — records which Claude Code sessions were open | 2026-09-21 |
+| [`datetime-inject`](datetime-inject.md) | [`locriani/datetime-inject`](https://github.com/locriani/datetime-inject) | Plugin (public repo) — UserPromptSubmit hook, local date and time per turn | 2026-09-13, extracted from `plugins/` 2026-10-10 |
+| [`stack-profiles`](stack-profiles.md) | [`locriani/stack-profiles`](https://github.com/locriani/stack-profiles) | Plugin (public repo) — 11 per-stack profiles + SessionStart detector | 2026-09-13, extracted from `plugins/` 2026-10-10 |
+| [`mermaid-system-design`](mermaid-system-design.md) | [`locriani/mermaid-system-design`](https://github.com/locriani/mermaid-system-design) | Plugin (public repo) — Mermaid shape/edge rules + render checker | 2026-09-15, extracted from `plugins/` 2026-10-10 |
+| [`branch-graph`](branch-graph.md) | [`locriani/branch-graph`](https://github.com/locriani/branch-graph) | Plugin (public repo) — diff as a before/after module import diagram, linked to hunks | 2026-09-23, extracted from `plugins/` 2026-10-10 |
+| [`bug-hunt`](bug-hunt.md) | [`locriani/bug-hunt`](https://github.com/locriani/bug-hunt) | Plugin (public repo) — headless bug hunt reporting only proven bugs | 2026-09-26, extracted from `plugins/` 2026-10-10 |
