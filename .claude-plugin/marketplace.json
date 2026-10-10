@@ -7,36 +7,6 @@
   },
   "plugins": [
     {
-      "name": "branch-graph",
-      "description": "A branch's diff as a before/after module import diagram, linked to its hunks, with import-rule drift.",
-      "version": "0.6.0",
-      "source": "./plugins/branch-graph",
-      "author": {
-        "name": "Zach Gardner",
-        "email": "locriani@gmail.com"
-      }
-    },
-    {
-      "name": "bug-hunt",
-      "description": "Headless bug hunt that reports only bugs a failing repro proves; exit 1 on findings.",
-      "version": "0.1.1",
-      "source": "./plugins/bug-hunt",
-      "author": {
-        "name": "Zach Gardner",
-        "email": "locriani@gmail.com"
-      }
-    },
-    {
-      "name": "datetime-inject",
-      "description": "UserPromptSubmit hook injecting per-turn local date and time.",
-      "version": "1.0.0",
-      "source": "./plugins/datetime-inject",
-      "author": {
-        "name": "Zach Gardner",
-        "email": "locriani@gmail.com"
-      }
-    },
-    {
       "name": "extras",
       "description": "Five skills: code-review, time-estimation, defect-density, dev-velocity, skill-perf-judge.",
       "version": "1.1.0",
@@ -67,16 +37,6 @@
       }
     },
     {
-      "name": "mermaid-system-design",
-      "description": "Skill: fix the shape and edge vocabulary before drawing a system architecture in Mermaid, then render every diagram before shipping it.",
-      "version": "1.1.0",
-      "source": "./plugins/mermaid-system-design",
-      "author": {
-        "name": "Zach Gardner",
-        "email": "locriani@gmail.com"
-      }
-    },
-    {
       "name": "prd-design",
       "description": "Skill: interview before writing a PRD, then decompose into ordered vertical slices led by a tracer bullet.",
       "version": "1.0.0",
@@ -101,16 +61,6 @@
       "description": "Stop-hook ledger of skill-invocation cost, plus a judge reminder.",
       "version": "1.0.0",
       "source": "./plugins/skill-perf",
-      "author": {
-        "name": "Zach Gardner",
-        "email": "locriani@gmail.com"
-      }
-    },
-    {
-      "name": "stack-profiles",
-      "description": "Eleven per-stack addenda plus a SessionStart detector that loads only the matching one.",
-      "version": "1.0.0",
-      "source": "./plugins/stack-profiles",
       "author": {
         "name": "Zach Gardner",
         "email": "locriani@gmail.com"
