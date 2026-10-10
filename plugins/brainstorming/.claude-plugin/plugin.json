@@ -1,0 +1,15 @@
+{
+  "name": "brainstorming",
+  "description": "Skill: find out what the user actually wants, and why, before building anything. Extracted from obra/superpowers (MIT).",
+  "version": "0.1.0",
+  "author": {
+    "name": "Zach Gardner",
+    "email": "locriani@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "brainstorming",
+    "requirements",
+    "design"
+  ]
+}
