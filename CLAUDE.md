@@ -22,17 +22,24 @@ Moving a row into **Approved** requires recording the wording that granted it.
 
 ## Structure
 
-- `.claude-plugin/marketplace.json` — the registry. One entry per approved plugin.
+- `.claude-plugin/marketplace.json` — the registry. One entry per approved
+  plugin still carried here.
 - `plugins/<name>/` — one directory per addition, each with its own
   `.claude-plugin/plugin.json`, plus `skills/`, `hooks/`, and/or MCP source.
+  Seven additions are still carried here: `extras`, `github-utilities`,
+  `logic-rendering`, `prd-design`, `repo-scaffold`, `skill-perf`, and
+  `worktree-guard`. The extracted five live in their own repos — see
+  `referenced/`.
 - `SETUP-LIST.md` — approved / pending / declined.
 
 ## Referenced, not absorbed
 
-An addition that already has its own repo stays there. This marketplace names it
-as a required marketplace and `SETUP-LIST.md` records the coordinates. Vendoring
-a copy creates a second source of truth that goes stale silently, which is the
-failure mode this convention exists to avoid.
+An addition that already has its own repo stays there and installs from that
+repo's own marketplace (`claude plugin marketplace add locriani/<name>`, then
+`claude plugin install <name>@<name>`). `SETUP-LIST.md` records the
+coordinates and `referenced/` points to it. Vendoring a copy creates a second
+source of truth that goes stale silently, which is the failure mode this
+convention exists to avoid.
 
 ## Relationship to Standard Configs
 
